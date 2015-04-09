@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-static char base64_tbl[] = {
+static const char base64_tbl[] = {
 	[ 0] = 'A', [ 1] = 'B', [ 2] = 'C', [ 3] = 'D', [ 4] = 'E', [ 5] = 'F',
 	[ 6] = 'G', [ 7] = 'H', [ 8] = 'I', [ 9] = 'J', [10] = 'K', [11] = 'L',
 	[12] = 'M', [13] = 'N', [14] = 'O', [15] = 'P', [16] = 'Q', [17] = 'R',
@@ -31,34 +31,36 @@ static char base64_tbl[] = {
 	(_low(first, __fbits) | _high(second, 6 - (__fbits))); \
 })
 
+#define base64_byte(...) (base64_tbl[index(__VA_ARGS__)])
+
 void encode_base64(const char *in, size_t len, char *out)
 {
 	unsigned i, j = 0;
 
 	for (i = 0; i < len - 2; i += 3) {
-		out[j++] = base64_tbl[index(0, in[i], 0)];
-		out[j++] = base64_tbl[index(in[i], in[i + 1], 2)];
-		out[j++] = base64_tbl[index(in[i + 1], in[i + 2], 4)];
-		out[j++] = base64_tbl[index(in[i + 2], 0, 6)];
+		out[j++] = base64_byte(0, in[i], 0);
+		out[j++] = base64_byte(in[i], in[i + 1], 2);
+		out[j++] = base64_byte(in[i + 1], in[i + 2], 4);
+		out[j++] = base64_byte(in[i + 2], 0, 6);
 	}
 
 	switch (len % 3) {
 	case 2:
-		out[j++] = base64_tbl[index(0, in[i], 0)];
-		out[j++] = base64_tbl[index(in[i], in[i + 1], 2)];
-		out[j++] = base64_tbl[index(in[i + 1], 0, 4)];
+		out[j++] = base64_byte(0, in[i], 0);
+		out[j++] = base64_byte(in[i], in[i + 1], 2);
+		out[j++] = base64_byte(in[i + 1], 0, 4);
 		out[j++] = BASE64_PAD;
 		break;
 	case 1:
-		out[j++] = base64_tbl[index(0, in[i], 0)];
-		out[j++] = base64_tbl[index(in[i], 0, 2)];
+		out[j++] = base64_byte(0, in[i], 0);
+		out[j++] = base64_byte(in[i], 0, 2);
 		out[j++] = BASE64_PAD;
 		out[j++] = BASE64_PAD;
 		break;
 	}
 }
 
-static const char *encodeme =
+static const char * const encodeme =
 "\x49\x27\x6d\x20\x6b\x69\x6c\x6c\x69\x6e\x67\x20\x79\x6f\x75\x72\x20\x62\x72"
 "\x61\x69\x6e\x20\x6c\x69\x6b\x65\x20\x61\x20\x70\x6f\x69\x73\x6f\x6e\x6f\x75"
 "\x73\x20\x6d\x75\x73\x68\x72\x6f\x6f\x6d";
