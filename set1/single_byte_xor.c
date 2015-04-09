@@ -8,6 +8,10 @@ static int char_english_score(char c)
 		return 2;
 	case '0'...'9': /* fallthrough */
 	case '\'': /* fallthrough */
+	case '\n': /* fallthrough */
+	case '\t': /* fallthrough */
+	case ',': /* fallthrough */
+	case '.': /* fallthrough */
 	case ' ':
 		return 1;
 	default:
@@ -32,7 +36,7 @@ static char *single_byte_xor(const char *in, size_t len, char *out,
 	return out;
 }
 
-char crack_single_byte_xor(const char *in, size_t len, char *out)
+char crack_single_byte_xor(const char *in, size_t len, char *out, int *pscore)
 {
 	int chiper;
 	int score;
@@ -51,6 +55,8 @@ char crack_single_byte_xor(const char *in, size_t len, char *out)
 	}
 
 	single_byte_xor(in, len, out, best_chiper);
+	if (pscore)
+		*pscore = best_score;
 	return best_chiper;
 }
 
@@ -63,7 +69,8 @@ int main(int argc, char *argv[])
 	char chiper;
 
 	buf[sizeof(buf) - 1] = 0;
-	chiper = crack_single_byte_xor(crackme, sizeof(crackme) - 1, buf);
+	chiper = crack_single_byte_xor(crackme, sizeof(crackme) - 1, buf,
+			NULL);
 	printf("0x%02x\n", chiper);
 	printf("%s\n", buf);
 	return 0;
