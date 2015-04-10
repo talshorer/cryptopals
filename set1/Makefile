@@ -9,6 +9,8 @@ detect_single_byte_xor.out_LIBS := single_byte_xor
 
 OBJ += repeating_key_xor.out
 
+OBJ += hamming_distance.out
+
 TMD := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(TMD)/../env.mk
 
