@@ -2,16 +2,18 @@ CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L.
 
 CLEAN := rm -rf
 
+cflags = $(CFLAGS) $($(1)_CFLAGS) $($(1)_LIBS:%=-l%)
+
 default: all
 
 %.o: %.c
-	$(CC) -c $< -o $@ $(CFLAGS) $($@_CFLAGS)
+	$(CC) -c $< -o $@ $(call cflags,$@)
 
 %.out: %.o
-	$(CC) $< -o $@ $(CFLAGS) $($@_CFLAGS)
+	$(CC) $< -o $@ $(call cflags,$@)
 
 lib%.so: %.o
-	$(CC) $< -o $@ -shared $(CFLAGS) $($@_CFLAGS)
+	$(CC) $< -o $@ -shared $(call cflags,$@)
 
 all: $(OBJ)
 
