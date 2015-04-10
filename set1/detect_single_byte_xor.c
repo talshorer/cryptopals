@@ -2,7 +2,7 @@
 
 #include "single_byte_xor.h"
 
-int all_english(const char *buf, size_t len)
+static int all_english(const char *buf, size_t len)
 {
 	while (len--)
 		if (!char_english_score(buf[len]))
