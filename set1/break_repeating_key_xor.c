@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #include "hamming_distance.h"
 #include "single_byte_xor.h"
 #include "repeating_key_xor.h"
+#include "base64_core.h"
+
+#define INPUTFILE "6.gen.txt"
 
 #define min_t(type, x, y) ({			\
 	type __min1 = (x);			\
@@ -33,7 +40,6 @@ static unsigned get_key_len(const char *buf, size_t len, size_t key_max_len)
 				);
 		score = (float)hamming /
 				(key_len * (nblocks * (nblocks - 1) / 2));
-		printf("%u %f\n", key_len, score);
 		if (score < best_score || best_score == GET_KEY_LEN_NOSCORE) {
 			best_score = score;
 			best_key_len = key_len;
@@ -65,23 +71,65 @@ void break_repeating_key_xor(const char *in, size_t in_len, char *key,
 	repeating_key_xor(in, in_len, key, *key_len, out);
 }
 
-static const char crackme[] =
-"\x0b\x36\x37\x27\x2a\x2b\x2e\x63\x62\x2c\x2e\x69\x69\x2a\x23\x69\x3a\x2a\x3c"
-"\x63\x24\x20\x2d\x62\x3d\x63\x34\x3c\x2a\x26\x22\x63\x24\x27\x27\x65\x27\x2a"
-"\x28\x2b\x2f\x20\x43\x0a\x65\x2e\x2c\x65\x2a\x31\x24\x33\x3a\x65\x3e\x2b\x20"
-"\x27\x63\x0c\x69\x2b\x20\x28\x31\x65\x28\x63\x26\x30\x2e\x27\x28\x2f";
-
 int main(int argc, char *argv[])
 {
 	char key[40];
 	unsigned key_len = 0;
-	char buf[sizeof(crackme)];
+	int fd, err;
+	size_t inputsize, outputsize;
+	size_t left;
+	char *inputbuf, *encoutputbuf, *decoutputbuf;
 
-	buf[sizeof(buf) - 1] = 0;
-	break_repeating_key_xor(crackme, sizeof(crackme) - 1, key, sizeof(key),
-			&key_len, buf);
+	fd = open(INPUTFILE, O_RDONLY);
+	if (fd < 0) {
+		perror("open");
+		return 1;
+	}
+	lseek(fd, 0, SEEK_END);
+	inputsize = lseek(fd, 0, SEEK_CUR);
+	lseek(fd, 0, SEEK_SET);
+	inputbuf = malloc(inputsize);
+	if (!inputbuf) {
+		perror("malloc");
+		close(fd);
+		return 1;
+	}
+	for (left = inputsize; left; left -= err) {
+		err = read(fd, &inputbuf[inputsize - left], left);
+		if (err < 0) {
+			perror("read");
+			free(inputbuf);
+			close(fd);
+			return 1;
+		}
+	}
+	close(fd);
+
+	/* might be a bit more than needed if the base64 input is padded */
+	outputsize = base64_size_to_plain_size(inputbuf, inputsize) + 1;
+	encoutputbuf = malloc(outputsize);
+	if (!encoutputbuf) {
+		perror("malloc");
+		return 1;
+	}
+	memset(encoutputbuf, 0, outputsize);
+	decode_base64(inputbuf, inputsize, encoutputbuf);
+	free(inputbuf);
+
+	decoutputbuf = malloc(outputsize);
+	if (!decoutputbuf) {
+		free(encoutputbuf);
+		perror("malloc");
+		return 1;
+	}
+	memset(decoutputbuf, 0, outputsize);
+
+	break_repeating_key_xor(encoutputbuf, outputsize - 1, key, sizeof(key),
+			&key_len, decoutputbuf);
+	free(encoutputbuf);
 	key[key_len] = 0;
 	printf("%d %s\n", key_len, key);
-	printf("%s\n", buf);
+	printf("%s\n", decoutputbuf);
+	free(decoutputbuf);
 	return 0;
 }

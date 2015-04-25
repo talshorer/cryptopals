@@ -60,6 +60,16 @@ void encode_base64(const char *in, size_t len, char *out)
 	}
 }
 
+size_t base64_size_to_plain_size(const char *in, size_t len)
+{
+	size_t ret;
+
+	ret = len / 4 * 3;
+	while(in[--len] == BASE64_PAD)
+		ret--;
+	return ret;
+}
+
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 int decode_base64(const char *in, size_t len, char *out)
@@ -68,8 +78,6 @@ int decode_base64(const char *in, size_t len, char *out)
 	unsigned pad = 0;
 	char c;
 	uint32_t v;
-
-	printf("%s %zu\n", __func__, len);
 
 	for (i = 0, o = 0; i < len; i += 4, o += 3) {
 		v = 0;

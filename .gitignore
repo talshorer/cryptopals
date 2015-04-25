@@ -31,5 +31,6 @@
 # Debug files
 *.dSYM/
 
-# editor backups
+# Editor backups and generated files
 *~
+*.gen.*

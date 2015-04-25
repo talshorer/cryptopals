@@ -4,6 +4,7 @@
 extern void encode_base64(const char *, size_t, char *);
 
 extern int decode_base64(const char *, size_t, char *);
+extern size_t base64_size_to_plain_size(const char *, size_t);
 
 #endif /* _BASE64_CORE_H */
 
