@@ -1,4 +1,5 @@
 OBJ += encode_base64.out
+encode_base64.out_LIBS := base64_core
 
 OBJ += fixed_xor.out
 
@@ -15,6 +16,8 @@ break_repeating_key_xor.out_LIBS += repeating_key_xor
 
 TMD := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(TMD)/../env.mk
+
+encode_base64.out: $(encode_base64.out_LIBS:%=lib%.so)
 
 detect_single_byte_xor.out: $(detect_single_byte_xor.out_LIBS:%=lib%.so)
 
