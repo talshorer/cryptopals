@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 #include "input6.c"
 

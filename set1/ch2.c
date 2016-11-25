@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
  
 static const char a[] =
 "\x1c\x01\x11\x00\x1f\x01\x01\x00\x06\x1a\x02\x4b\x53\x53\x50\x09\x18\x1c";

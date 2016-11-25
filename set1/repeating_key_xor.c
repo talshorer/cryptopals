@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 void repeating_key_xor(const char *in, size_t in_len, const char *key,
 		size_t key_len, char *out)

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 #define min_t(type, x, y) ({			\
 	type __min1 = (x);			\

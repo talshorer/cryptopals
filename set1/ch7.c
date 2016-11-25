@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <openssl/aes.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 #include "input7.c"
 

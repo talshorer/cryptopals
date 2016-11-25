@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 static const char base64_tbl[] = {
 	[ 0] = 'A', [ 1] = 'B', [ 2] = 'C', [ 3] = 'D', [ 4] = 'E', [ 5] = 'F',

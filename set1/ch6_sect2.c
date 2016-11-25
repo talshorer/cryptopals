@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 static const char a[] = "this is a test";
 static const char b[] = "wokka wokka!!!";

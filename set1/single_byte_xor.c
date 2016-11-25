@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 int char_english_score(char c)
 {

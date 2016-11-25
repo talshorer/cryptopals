@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 static const char cryptme[] =
 "Burning 'em, if you ain't quick and nimble\n"

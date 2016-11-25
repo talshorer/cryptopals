@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "set1.h"
+#include <cryptopals/set1.h>
 
 bool detect_aes_ecb(const char *buf, size_t len, unsigned int bits,
 		unsigned int *matches, unsigned int *maxmatches)
