@@ -1,6 +1,6 @@
 CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L.
 
-CLEAN := rm -rf
+CLEAN = @find . -name "$(1)" -exec rm -f {} \;
 
 LIB := libcryptopals.so
 
@@ -21,14 +21,15 @@ $(LIB): $(LIB_OBJS)
 
 all: $(LIB) $(OBJ)
 
-# clean: clean-obj clean-backup
-# 	$(CLEAN) *.o *.so *.out
-#
-# clean-obj:
-# 	$(CLEAN) $(OBJ)
-#
-# clean-backup:
-# 	$(CLEAN) *~
+clean: clean-obj clean-backup
+
+clean-obj:
+	$(call CLEAN,*.o)
+	$(call CLEAN,*.out)
+	$(call CLEAN,*.so)
+
+clean-backup:
+	$(call CLEAN,*~)
 
 %.gen.txt: %.txt
 	tr -d '\n' < $< > $@

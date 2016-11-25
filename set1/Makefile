@@ -7,5 +7,4 @@ OBJ += $(foreach o, $(shell ls $(THISDIR)/ch*.c),$(subst .c,.out,$(o)))
 
 $(THISDIR)/ch7.out_LIBS := crypto
 
-
 LIB_OBJS += $(foreach o,$(_LIB_OBJS),$(THISDIR)/$(o))
