@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "set1.h"
+
 unsigned hamming_distance(const char *a, const char *b, size_t len)
 {
 	unsigned i, ret = 0;

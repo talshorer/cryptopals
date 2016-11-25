@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "hamming_distance.h"
-#include "single_byte_xor.h"
-#include "repeating_key_xor.h"
-#include "base64_core.h"
-
-#define INPUTFILE "6.gen.txt"
+#include "set1.h"
 
 #define min_t(type, x, y) ({			\
 	type __min1 = (x);			\
