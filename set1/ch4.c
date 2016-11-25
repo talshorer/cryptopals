@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "single_byte_xor.h"
+#include "set1.h"
 
 static int all_english(const char *buf, size_t len)
 {
@@ -10,7 +10,7 @@ static int all_english(const char *buf, size_t len)
 	return 1;
 }
 
-#include "detect_single_byte_xor_input.c"
+#include "input4.c"
 
 int main(int argc, char *argv[])
 {
@@ -20,8 +20,11 @@ int main(int argc, char *argv[])
 	buf[INPUTLEN] = 0;
 	for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
 		crack_single_byte_xor(input[i], INPUTLEN, buf);
-		if (all_english(buf, INPUTLEN))
+		if (all_english(buf, INPUTLEN)) {
+			if (buf[INPUTLEN - 1] == '\n')
+				buf[INPUTLEN - 1] = 0;
 			printf("%d %s\n", i, buf);
+		}
 	}
 	return 0;
 }

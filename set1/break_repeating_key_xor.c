@@ -1,9 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 
 #include "hamming_distance.h"
 #include "single_byte_xor.h"
@@ -69,67 +65,4 @@ void break_repeating_key_xor(const char *in, size_t in_len, char *key,
 	}
 	free(buf);
 	repeating_key_xor(in, in_len, key, *key_len, out);
-}
-
-int main(int argc, char *argv[])
-{
-	char key[40];
-	unsigned key_len = 0;
-	int fd, err;
-	size_t inputsize, outputsize;
-	size_t left;
-	char *inputbuf, *encoutputbuf, *decoutputbuf;
-
-	fd = open(INPUTFILE, O_RDONLY);
-	if (fd < 0) {
-		perror("open");
-		return 1;
-	}
-	lseek(fd, 0, SEEK_END);
-	inputsize = lseek(fd, 0, SEEK_CUR);
-	lseek(fd, 0, SEEK_SET);
-	inputbuf = malloc(inputsize);
-	if (!inputbuf) {
-		perror("malloc");
-		close(fd);
-		return 1;
-	}
-	for (left = inputsize; left; left -= err) {
-		err = read(fd, &inputbuf[inputsize - left], left);
-		if (err < 0) {
-			perror("read");
-			free(inputbuf);
-			close(fd);
-			return 1;
-		}
-	}
-	close(fd);
-
-	/* might be a bit more than needed if the base64 input is padded */
-	outputsize = base64_size_to_plain_size(inputbuf, inputsize) + 1;
-	encoutputbuf = malloc(outputsize);
-	if (!encoutputbuf) {
-		perror("malloc");
-		return 1;
-	}
-	memset(encoutputbuf, 0, outputsize);
-	decode_base64(inputbuf, inputsize, encoutputbuf);
-	free(inputbuf);
-
-	decoutputbuf = malloc(outputsize);
-	if (!decoutputbuf) {
-		free(encoutputbuf);
-		perror("malloc");
-		return 1;
-	}
-	memset(decoutputbuf, 0, outputsize);
-
-	break_repeating_key_xor(encoutputbuf, outputsize - 1, key, sizeof(key),
-			&key_len, decoutputbuf);
-	free(encoutputbuf);
-	key[key_len] = 0;
-	printf("%d %s\n", key_len, key);
-	printf("%s\n", decoutputbuf);
-	free(decoutputbuf);
-	return 0;
 }
