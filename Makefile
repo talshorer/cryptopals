@@ -4,9 +4,14 @@ CLEAN = @find . -name "$(1)" -exec rm -f {} \;
 
 LIB := libcryptopals.so
 
+$(LIB)_LIBS := crypto
+
 cflags = $(CFLAGS) $($(1)_CFLAGS) $($(1)_LIBS:%=-l%)
 
 default: all
+
+LIB_OBJS :=
+OBJ :=
 
 include set*/Makefile
 
