@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <cryptopals/set2.h>
+#include <cryptopals/set1.h>
 
 static const char message[] = "Hello, world!\n"
 		"What a lovely day!\n"
@@ -19,21 +19,16 @@ int main(int argc, char *argv[])
 {
 	char encrypted[padded_message_size];
 	char decrypted[padded_message_size];
-	char iv[key_size];
-	unsigned int i;
 
+	memset(decrypted, 0, sizeof(decrypted));
 	strcpy(decrypted, message);
-	pkcs7_pad(decrypted, sizeof(message), padded_message_size);
 
-	for (i = 0; i < key_size; i++)
-		iv[i] = i;
-
-	aes_cbc_encrypt(decrypted, encrypted, padded_message_size, key_size * 8,
-			key, iv);
+	aes_ecb_encrypt(decrypted, encrypted, padded_message_size, key_size * 8,
+			key);
 	memset(decrypted, 0, padded_message_size);
 
-	aes_cbc_decrypt(encrypted, decrypted, padded_message_size, key_size * 8,
-			key, iv);
+	aes_ecb_decrypt(encrypted, decrypted, padded_message_size, key_size * 8,
+			key);
 	printf("%s", decrypted);
 
 	return 0;

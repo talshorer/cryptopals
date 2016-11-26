@@ -20,6 +20,11 @@ extern unsigned hamming_distance(const char *a, const char *b, size_t len);
 extern void break_repeating_key_xor(const char *in, size_t in_len, char *key,
 		size_t key_max_len, unsigned *key_len, char *out);
 
+extern void aes_ecb_encrypt(const char *in, char *out, size_t len,
+		unsigned int bits, const char *key);
+extern void aes_ecb_decrypt(const char *in, char *out, size_t len,
+		unsigned int bits, const char *key);
+
 extern bool detect_aes_ecb(const char *buf, size_t len, unsigned int bits,
 		unsigned int *matches, unsigned int *maxmatches);
 
