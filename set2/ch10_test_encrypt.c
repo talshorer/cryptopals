@@ -37,5 +37,4 @@ int main(int argc, char *argv[])
 	printf("%s", decrypted);
 
 	return 0;
-
 }
