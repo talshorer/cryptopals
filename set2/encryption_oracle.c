@@ -24,13 +24,18 @@ static void *make_random_bytes(unsigned int n)
 	return ret;
 }
 
-int setup_oracle(struct oracle *oracle, size_t append_base,
+int setup_oracle(struct oracle *oracle, size_t append_base, char *prefix,
+		size_t prefix_len, char *suffix, size_t suffix_len,
 		enum oracle_mode mode, unsigned int bits, bool constant_key,
 		bool announce_encryption)
 {
 	int ret = 0;
 
 	oracle->append_base = append_base;
+	oracle->prefix = prefix;
+	oracle->prefix_len = prefix_len;
+	oracle->suffix = suffix;
+	oracle->suffix_len = suffix_len;
 	oracle->mode = mode;
 	oracle->bits = bits;
 	oracle->bytes = bits / 8;
@@ -59,10 +64,12 @@ char *encryption_oracle(const char *in, size_t inlen,
 			random() % (oracle->append_base + 1);
 	char *out;
 	char *padded_in;
+	char *p;
 	char *key = NULL;
 	bool failed = true;
 
-	*outlen = inlen + append_start + append_end;
+	*outlen = inlen + append_start + append_end +
+			oracle->prefix_len + oracle->suffix_len;
 	*outlen = *outlen + oracle->bytes - *outlen % oracle->bytes;
 	out = malloc(*outlen);
 	if (!out)
@@ -70,10 +77,18 @@ char *encryption_oracle(const char *in, size_t inlen,
 	padded_in = malloc(*outlen);
 	if (!padded_in)
 		goto fail_malloc_padded_in;
-	fill_random_bytes(padded_in, append_start);
-	memcpy(padded_in + append_start, in, inlen);
-	fill_random_bytes(padded_in + append_start + inlen, append_end);
-	pkcs7_pad(padded_in, append_start + inlen + append_end, *outlen);
+	p = padded_in;
+	fill_random_bytes(p, append_start);
+	p += append_start;
+	memcpy(p, oracle->prefix, oracle->prefix_len);
+	p += oracle->prefix_len;
+	memcpy(p, in, inlen);
+	p += inlen;
+	fill_random_bytes(p, append_end);
+	p += append_end;
+	memcpy(p, oracle->suffix, oracle->suffix_len);
+	p += oracle->suffix_len;
+	pkcs7_pad(padded_in, p - padded_in, *outlen);
 	if (oracle->key) {
 		key = oracle->key;
 	} else {
