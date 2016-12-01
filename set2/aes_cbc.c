@@ -33,12 +33,12 @@ static void aes_cbc_crypt(const char *in, char *out, size_t len,
 	}
 	for (i = 0; i < len; i += bytes) {
 		if (encrypt) {
-			repeating_key_xor(&in[i], bytes, vect, bytes, vect);
+			fixed_xor(&in[i], vect, bytes, vect);
 			AES_encrypt((void *)vect, (void *)&out[i], &aes_key);
 			memcpy(vect, &out[i], bytes);
 		} else {
 			AES_decrypt((void *)&in[i], (void *)&out[i], &aes_key);
-			repeating_key_xor(&out[i], bytes, vect, bytes, &out[i]);
+			fixed_xor(&out[i], vect, bytes, &out[i]);
 			memcpy(vect, &in[i], bytes);
 		}
 	}
