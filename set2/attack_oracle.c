@@ -6,7 +6,7 @@
 
 #define INITIAL_SHIFT 8 /* unlikely to attack larger blocks than 256 bytes */
 
-static size_t discover_block_size(struct oracle *oracle)
+static size_t discover_block_size(struct oracle *oracle, size_t *suffix_len)
 {
 	char *out;
 	size_t outlen;
@@ -35,6 +35,7 @@ static size_t discover_block_size(struct oracle *oracle)
 			/* padding added an entire block */
 			if (last_outlen && last_outlen < outlen) {
 				ret = outlen - last_outlen;
+				*suffix_len = outlen - ret - i + 1;
 				goto out;
 			}
 			last_outlen = outlen;
@@ -49,6 +50,10 @@ out:
 
 char *oracle_get_suffix_no_prefix(struct oracle *oracle, size_t *outlen)
 {
-	printf("block size: %zd bits\n", 8 * discover_block_size(oracle));
+	size_t bytes, suffix_len;
+
+	bytes = discover_block_size(oracle, &suffix_len);
+	printf("block size: %zd bits\n", 8 * bytes);
+	printf("suffix length: %zd bytes\n", suffix_len);
 	return NULL;
 }
