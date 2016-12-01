@@ -35,4 +35,6 @@ extern void cleanup_oracle(struct oracle *oracle);
 extern char *encryption_oracle(const char *in, size_t inlen,
 		const struct oracle *oracle, size_t *outlen);
 
+extern char *oracle_get_suffix_no_prefix(struct oracle *oracle, size_t *outlen);
+
 #endif /* _SET2_H */
