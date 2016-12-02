@@ -15,8 +15,10 @@ int main(int argc, char *argv[])
 {
 	struct oracle oracle;
 	char *suffix;
-	size_t len;
+	char *out;
+	size_t len, outlen;
 	int ret;
+	unsigned int i;
 
 	len = base64_size_to_plain_size(suffix_base64,
 			sizeof(suffix_base64) - 1);
@@ -30,8 +32,12 @@ int main(int argc, char *argv[])
 	if (setup_oracle(&oracle, 0, NULL, 0, suffix, len, ORACLE_MODE_ECB, 128,
 			true, false))
 		goto fail_setup_oracle;
-	oracle_get_suffix_no_prefix(&oracle, NULL);
+	out = oracle_get_suffix_no_prefix(&oracle, &outlen);
+	printf("============= decrypted message: =============\n");
+	for (i = 0; i < outlen; i++)
+		putchar(out[i]);
 	ret = 0;
+	free(out);
 	cleanup_oracle(&oracle);
 fail_setup_oracle:
 	free(suffix);
