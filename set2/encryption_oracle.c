@@ -70,7 +70,7 @@ char *encryption_oracle(const char *in, size_t inlen,
 
 	*outlen = inlen + append_start + append_end +
 			oracle->prefix_len + oracle->suffix_len;
-	*outlen = *outlen + oracle->bytes - ((*outlen - 1) % oracle->bytes + 1);
+	*outlen = get_padded_size(*outlen, oracle->bytes);
 	out = malloc(*outlen);
 	if (!out)
 		goto fail_malloc_out;
