@@ -5,6 +5,7 @@
 
 extern void pkcs7_pad(char *buf, size_t inlen, size_t outlen);
 extern size_t pkcs7_get_padded_size(size_t inlen, unsigned int bytes);
+extern bool pkcs7_validate_padding(char *buf, size_t len);
 
 extern void aes_cbc_encrypt(const char *in, char *out, size_t len,
 		unsigned int bits, const char *key, const char *iv);
