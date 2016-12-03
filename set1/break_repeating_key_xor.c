@@ -6,15 +6,15 @@
 #define min_t(type, x, y) ({			\
 	type __min1 = (x);			\
 	type __min2 = (y);			\
-	__min1 < __min2 ? __min1: __min2; })
+	__min1 < __min2 ? __min1 : __min2; })
 
 #define GET_LEY_LEN_MINBLOCKS 4
 #define GET_KEY_LEN_NOSCORE 0.0f
-static unsigned get_key_len(const char *buf, size_t len, size_t key_max_len)
+static unsigned int get_key_len(const char *buf, size_t len, size_t key_max_len)
 {
-	unsigned key_len, best_key_len = 0;
-	unsigned nblocks, block1, block2;
-	unsigned hamming;
+	unsigned int key_len, best_key_len = 0;
+	unsigned int nblocks, block1, block2;
+	unsigned int hamming;
 	float score, best_score = GET_KEY_LEN_NOSCORE;
 
 	for (key_len = 2; key_len < key_max_len; key_len++) {
@@ -40,10 +40,10 @@ static unsigned get_key_len(const char *buf, size_t len, size_t key_max_len)
 }
 
 void break_repeating_key_xor(const char *in, size_t in_len, char *key,
-		size_t key_max_len, unsigned *key_len, char *out)
+		size_t key_max_len, unsigned int *key_len, char *out)
 {
-	unsigned i, j;
-	unsigned base_limit, limit, leftover;
+	unsigned int i, j;
+	unsigned int base_limit, limit, leftover;
 	char *buf;
 
 	*key_len = get_key_len(in, in_len, key_max_len);

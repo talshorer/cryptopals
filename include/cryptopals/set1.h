@@ -15,10 +15,10 @@ extern char crack_single_byte_xor(const char *in, size_t len, char *out);
 extern void repeating_key_xor(const char *, size_t, const char *, size_t,
 		char *);
 
-extern unsigned hamming_distance(const char *a, const char *b, size_t len);
+extern unsigned int hamming_distance(const char *a, const char *b, size_t len);
 
 extern void break_repeating_key_xor(const char *in, size_t in_len, char *key,
-		size_t key_max_len, unsigned *key_len, char *out);
+		size_t key_max_len, unsigned int *key_len, char *out);
 
 extern void aes_ecb_encrypt(const char *in, char *out, size_t len,
 		unsigned int bits, const char *key);

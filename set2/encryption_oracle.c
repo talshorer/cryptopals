@@ -50,7 +50,8 @@ int setup_oracle(struct oracle *oracle, size_t append_base, char *prefix,
 	return ret;
 }
 
-void cleanup_oracle(struct oracle *oracle) {
+void cleanup_oracle(struct oracle *oracle)
+{
 	if (oracle->key)
 		free(oracle->key);
 }

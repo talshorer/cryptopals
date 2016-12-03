@@ -15,7 +15,7 @@ static int all_english(const char *buf, size_t len)
 int main(int argc, char *argv[])
 {
 	char buf[INPUTLEN + 1];
-	unsigned i;
+	unsigned int i;
 
 	buf[INPUTLEN] = 0;
 	for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {

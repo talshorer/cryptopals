@@ -5,7 +5,7 @@
 void repeating_key_xor(const char *in, size_t in_len, const char *key,
 		size_t key_len, char *out)
 {
-	unsigned i;
+	unsigned int i;
 
 	for (i = 0; i < in_len; i++)
 		out[i] = in[i] ^ key[i % key_len];

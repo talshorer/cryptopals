@@ -20,17 +20,15 @@ static void aes_cbc_crypt(const char *in, char *out, size_t len,
 		perror("malloc vect");
 		return;
 	}
-	if (iv) {
+	if (iv)
 		memcpy(vect, iv, bytes);
-	} else {
+	else
 		memset(vect, 0, bytes);
-	}
 
-	if (encrypt) {
+	if (encrypt)
 		AES_set_encrypt_key((void *)key, bits, &aes_key);
-	} else {
+	else
 		AES_set_decrypt_key((void *)key, bits, &aes_key);
-	}
 	for (i = 0; i < len; i += bytes) {
 		if (encrypt) {
 			fixed_xor(&in[i], vect, bytes, vect);

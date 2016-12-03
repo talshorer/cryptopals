@@ -11,6 +11,7 @@ static const char encodeme[] =
 int main(int argc, char *argv[])
 {
 	char out[1024];
+
 	memset(out, 0, sizeof(out));
 	encode_base64(encodeme, sizeof(encodeme) - 1, out);
 	printf("%s\n", out);

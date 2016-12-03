@@ -11,7 +11,7 @@ static const char withkey[] = "ICE";
 int main(int argc, char *argv[])
 {
 	char buf[sizeof(cryptme) - 1];
-	unsigned i;
+	unsigned int i;
 
 	repeating_key_xor(cryptme, sizeof(buf),
 			withkey, sizeof(withkey) - 1, buf);

@@ -12,17 +12,15 @@ static void aes_ecb_crypt(const char *in, char *out, size_t len,
 	AES_KEY aes_key;
 	unsigned int bytes = bits / 8;
 
-	if (encrypt) {
+	if (encrypt)
 		AES_set_encrypt_key((void *)key, bits, &aes_key);
-	} else {
+	else
 		AES_set_decrypt_key((void *)key, bits, &aes_key);
-	}
 	for (i = 0; i < len; i += bytes) {
-		if (encrypt) {
+		if (encrypt)
 			AES_encrypt((void *)&in[i], (void *)&out[i], &aes_key);
-		} else {
+		else
 			AES_decrypt((void *)&in[i], (void *)&out[i], &aes_key);
-		}
 	}
 }
 

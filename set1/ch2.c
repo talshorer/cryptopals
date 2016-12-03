@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include <cryptopals/set1.h>
- 
+
 static const char a[] =
 "\x1c\x01\x11\x00\x1f\x01\x01\x00\x06\x1a\x02\x4b\x53\x53\x50\x09\x18\x1c";
 
@@ -13,7 +13,7 @@ static const char b[] =
 int main(int argc, char *argv[])
 {
 	char buf[size];
-	unsigned i;
+	unsigned int i;
 
 	fixed_xor(a, b, size, buf);
 	for (i = 0; i < size; i++)

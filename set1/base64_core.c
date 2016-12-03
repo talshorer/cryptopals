@@ -21,7 +21,7 @@ static const char base64_tbl[] = {
 
 #define _low(value, _bits) \
 ({ \
-	unsigned __bits = (_bits); \
+	unsigned int __bits = (_bits); \
 	(value & ((1 << __bits) - 1)) << (6 - __bits); \
 })
 
@@ -29,7 +29,7 @@ static const char base64_tbl[] = {
 
 #define index(first, second, _fbits) \
 ({ \
-	unsigned __fbits = (_fbits); \
+	unsigned int __fbits = (_fbits); \
 	(_low(first, __fbits) | _high(second, 6 - (__fbits))); \
 })
 
@@ -37,7 +37,7 @@ static const char base64_tbl[] = {
 
 void encode_base64(const char *in, size_t len, char *out)
 {
-	unsigned i, j = 0;
+	unsigned int i, j = 0;
 
 	for (i = 0; i < len - 2; i += 3) {
 		out[j++] = base64_byte(0, in[i], 0);
@@ -67,7 +67,7 @@ size_t base64_size_to_plain_size(const char *in, size_t len)
 	size_t ret;
 
 	ret = len / 4 * 3;
-	while(in[--len] == BASE64_PAD)
+	while (in[--len] == BASE64_PAD)
 		ret--;
 	return ret;
 }
@@ -76,8 +76,8 @@ size_t base64_size_to_plain_size(const char *in, size_t len)
 
 int decode_base64(const char *in, size_t len, char *out)
 {
-	unsigned i, o, j, k;
-	unsigned pad = 0;
+	unsigned int i, o, j, k;
+	unsigned int pad = 0;
 	char c;
 	uint32_t v;
 
@@ -99,7 +99,7 @@ int decode_base64(const char *in, size_t len, char *out)
 			}
 		}
 		if (pad)
-			switch(pad) {
+			switch (pad) {
 			case 1:
 				v >>= 2;
 				break;
