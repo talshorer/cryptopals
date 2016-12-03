@@ -89,7 +89,7 @@ char *oracle_get_suffix_no_prefix(struct oracle *oracle, size_t *suffix_len)
 
 	bytes = discover_block_size(oracle, suffix_len);
 	if (!bytes) {
-		printf("failed to discover  block size\n");
+		printf("failed to discover block size\n");
 		goto fail_early;
 	}
 	printf("block size: %zd bits\n", 8 * bytes);
@@ -149,4 +149,123 @@ fail_malloc_buf:
 fail_malloc_stimulus:
 fail_early:
 	return suffix;
+}
+
+static int get_full_prefix_blocks(struct oracle *oracle, size_t bytes)
+{
+	char *out1;
+	char *out2;
+	size_t outlen;
+	int ret = -1;
+	char x;
+	unsigned int i;
+
+	x = 0;
+	out1 = encryption_oracle(&x, 1, oracle, &outlen);
+	if (!out1)
+		goto fail1;
+	out2 = encryption_oracle(NULL, 0, oracle, &outlen);
+	if (!out2)
+		goto fail2;
+	for (i = 0; i < outlen / bytes; i++) {
+		if (memcmp(out1 + i * bytes, out2 + i * bytes, bytes))
+			break;
+	}
+	ret = i;
+	free(out2);
+fail2:
+	free(out1);
+fail1:
+	return ret;
+}
+
+static int get_prefix_size_mod_block_size(struct oracle *oracle, size_t bytes,
+		int full_prefix_blocks)
+{
+	char *in;
+	char *out;
+	int ret = -1;
+	unsigned int i;
+	size_t outlen;
+	char x, y;
+
+	x = 0x00;
+	y = 0xff;
+	in = malloc(bytes * 4);
+	if (!in) {
+		perror("malloc in");
+		goto fail_malloc_in;
+	}
+	memset(in, x, bytes * 2);
+	out = encryption_oracle(in, bytes * 2, oracle, &outlen);
+	if (!out)
+		goto fail_oracle;
+	/*
+	 * if the last block of the prefix matches our first injected block,
+	 * one of two things is true:
+	 *	1. the prefix's size a multiple of the block size
+	 *	2. the last block of the prefix is all the same arbitrary byte
+	 *	   we chose
+	 * change the byte and try again. if it matches again, the size is 0
+	 */
+	if (!memcmp(out + full_prefix_blocks * bytes,
+			out + (full_prefix_blocks + 1) * bytes, bytes)) {
+		x = 0x01;
+		memset(in, x, bytes * 3);
+		if (!memcmp(out + full_prefix_blocks * bytes,
+				out + (full_prefix_blocks + 1) * bytes,
+				bytes)) {
+			ret = 0;
+			goto out;
+		}
+	}
+	for (i = 1; i < bytes; i++) {
+		free(out);
+		memset(in, x, bytes * 2 + i);
+		memset(in + bytes * 2 + i, y, bytes);
+		out = encryption_oracle(in, bytes * 3 + i, oracle, &outlen);
+		if (!memcmp(out + (full_prefix_blocks + 1) * bytes,
+				out + (full_prefix_blocks + 2) * bytes,
+				bytes)) {
+			ret = bytes - i;
+			break;
+		}
+	}
+out:
+	free(out);
+fail_oracle:
+	free(in);
+fail_malloc_in:
+	return ret;
+}
+
+char *oracle_get_suffix_rand_prefix(struct oracle *oracle, size_t *suffix_len)
+{
+	size_t bytes;
+	size_t total_len;
+	int full_prefix_blocks;
+	int prefix_size_mod_block_size;
+	size_t prefix_len;
+
+	bytes = discover_block_size(oracle, &total_len);
+	if (!bytes) {
+		printf("failed to discover block size\n");
+		goto fail_early;
+	}
+	printf("block size: %zd bits\n", 8 * bytes);
+	printf("prefix+suffix length: %zd bytes\n", total_len);
+	full_prefix_blocks = get_full_prefix_blocks(oracle, bytes);
+	if (full_prefix_blocks < 0)
+		goto fail_early;
+	prefix_size_mod_block_size = get_prefix_size_mod_block_size(oracle,
+				bytes, full_prefix_blocks);
+	if (prefix_size_mod_block_size < 0)
+		goto fail_early;
+	prefix_len = full_prefix_blocks * bytes + prefix_size_mod_block_size;
+	*suffix_len = total_len - prefix_len;
+	printf("suffix length: %zd\n", *suffix_len);
+	printf("prefix length: %zd\n", prefix_len);
+fail_early:
+	*suffix_len = 0;
+	return NULL;
 }
