@@ -36,7 +36,7 @@ static size_t discover_block_size(struct oracle *oracle, size_t *suffix_len)
 			/* padding added an entire block */
 			if (last_outlen && last_outlen < outlen) {
 				ret = outlen - last_outlen;
-				*suffix_len = outlen - ret - i + 1;
+				*suffix_len = last_outlen - i;
 				goto out;
 			}
 			last_outlen = outlen;
