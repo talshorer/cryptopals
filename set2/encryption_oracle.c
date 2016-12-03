@@ -24,8 +24,8 @@ static void *make_random_bytes(unsigned int n)
 	return ret;
 }
 
-int setup_oracle(struct oracle *oracle, size_t append_base, char *prefix,
-		size_t prefix_len, char *suffix, size_t suffix_len,
+int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
+		size_t prefix_len, const char *suffix, size_t suffix_len,
 		enum oracle_mode mode, unsigned int bits, bool constant_key,
 		bool announce_encryption)
 {
