@@ -49,11 +49,16 @@ int main(int argc, char *argv[])
 			ORACLE_MODE_ECB, 128, true, false))
 		goto fail_setup_oracle;
 	out = oracle_get_suffix(&oracle, &outlen);
+	if (!out) {
+		ret = 1;
+		goto fail_get_suffix;
+	}
 	printf("============= decrypted message: =============\n");
 	for (i = 0; i < outlen; i++)
 		putchar(out[i]);
 	ret = 0;
 	free(out);
+fail_get_suffix:
 	cleanup_oracle(&oracle);
 fail_setup_oracle:
 	free(prefix);
