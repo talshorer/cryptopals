@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, len,
 			ORACLE_MODE_ECB, 128, true, false))
 		goto fail_setup_oracle;
-	out = oracle_get_suffix_rand_prefix(&oracle, &outlen);
+	out = oracle_get_suffix(&oracle, &outlen);
 	printf("============= decrypted message: =============\n");
 	for (i = 0; i < outlen; i++)
 		putchar(out[i]);
