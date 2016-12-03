@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <cryptopals/core.h>
 #include <cryptopals/set1.h>
 
 static int all_english(const char *buf, size_t len)
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
 	unsigned int i;
 
 	buf[INPUTLEN] = 0;
-	for (i = 0; i < sizeof(input) / sizeof(input[0]); i++) {
+	for (i = 0; i < ARRAY_SIZE(input); i++) {
 		crack_single_byte_xor(input[i], INPUTLEN, buf);
 		if (all_english(buf, INPUTLEN)) {
 			if (buf[INPUTLEN - 1] == '\n')

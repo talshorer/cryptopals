@@ -152,6 +152,10 @@ static char *encrypt_profile_for(const char *email, size_t *outlen)
 	return ret;
 }
 
+#define normal_email "fooxy@bar.com"
+#define hack_suffix \
+	"_____________admin\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11"
+
 int main(int argc, char *argv[])
 {
 	unsigned int i;
@@ -164,13 +168,12 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < KEY_BYTES; i++)
 		key[i] = random() & 0xff;
-	e1 = encrypt_profile_for("fooxy@bar.com", &len);
+	e1 = encrypt_profile_for(normal_email, &len);
 	if (!e1) {
 		printf("fail to create e1\n");
 		goto fail_e1;
 	}
-	e2 = encrypt_profile_for("fooxy@bar.com_____________admin"
-			"\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11", &len);
+	e2 = encrypt_profile_for(normal_email hack_suffix, &len);
 	if (!e2) {
 		printf("fail to create e2\n");
 		goto fail_e2;
@@ -192,6 +195,7 @@ int main(int argc, char *argv[])
 	printf("email=%s\nuid=%02x\nrole=%s\n", profile->email, profile->uid,
 			role_strings[profile->role]);
 	ret = 0;
+	free(profile);
 	free(e3);
 fail_e3:
 	if (ret)
