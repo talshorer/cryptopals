@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	}
 	decode_base64(suffix_base64, sizeof(suffix_base64) - 1, suffix);
 	if (setup_oracle(&oracle, 0, NULL, 0, suffix, len, ORACLE_MODE_ECB, 128,
-			true, false))
+			true, false, false))
 		goto fail_setup_oracle;
 	out = oracle_get_suffix(&oracle, &outlen);
 	if (!out) {

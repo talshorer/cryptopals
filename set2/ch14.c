@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		prefix[i] = random() & 0xff;
 	decode_base64(suffix_base64, sizeof(suffix_base64) - 1, suffix);
 	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, len,
-			ORACLE_MODE_ECB, 128, true, false))
+			ORACLE_MODE_ECB, 128, true, false, false))
 		goto fail_setup_oracle;
 	out = oracle_get_suffix(&oracle, &outlen);
 	if (!out) {

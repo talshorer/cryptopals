@@ -27,12 +27,13 @@ struct oracle {
 	unsigned int bits;
 	unsigned int bytes;
 	char *key;
+	char *iv;
 	bool announce_encryption;
 };
 extern int setup_oracle(struct oracle *oracle, size_t append_base,
 		const char *prefix, size_t prefix_len, const char *suffix,
 		size_t suffix_len, enum oracle_mode mode, unsigned int bits,
-		bool constant_key, bool announce_encryption);
+		bool constant_key, bool constant_iv, bool announce_encryption);
 extern void cleanup_oracle(struct oracle *oracle);
 extern char *encryption_oracle(const char *in, size_t inlen,
 		const struct oracle *oracle, size_t *outlen);

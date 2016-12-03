@@ -27,7 +27,7 @@ static void *make_random_bytes(unsigned int n)
 int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
 		size_t prefix_len, const char *suffix, size_t suffix_len,
 		enum oracle_mode mode, unsigned int bits, bool constant_key,
-		bool announce_encryption)
+		bool constant_iv, bool announce_encryption)
 {
 	int ret = 0;
 
@@ -46,7 +46,20 @@ int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
 	} else {
 		oracle->key = NULL;
 	}
+	if (constant_iv) {
+		oracle->iv = make_random_bytes(oracle->bytes);
+		if (!oracle->iv)
+			ret = 1;
+	} else {
+		oracle->iv = NULL;
+	}
 	oracle->announce_encryption = announce_encryption;
+	if (ret) {
+		if (oracle->key)
+			free(oracle->key);
+		if (oracle->iv)
+			free(oracle->iv);
+	}
 	return ret;
 }
 
@@ -54,6 +67,8 @@ void cleanup_oracle(struct oracle *oracle)
 {
 	if (oracle->key)
 		free(oracle->key);
+	if (oracle->iv)
+		free(oracle->iv);
 }
 
 char *encryption_oracle(const char *in, size_t inlen,
@@ -101,13 +116,18 @@ char *encryption_oracle(const char *in, size_t inlen,
 			(oracle->mode == ORACLE_MODE_RAND && (random() & 1))) {
 		char *iv;
 
-		iv = make_random_bytes(oracle->bytes);
-		if (!iv)
-			goto fail_malloc_iv;
+		if (oracle->iv) {
+			iv = oracle->iv;
+		} else {
+			iv = make_random_bytes(oracle->bytes);
+			if (!iv)
+				goto fail_malloc_iv;
+		}
 		if (oracle->announce_encryption)
 			printf("oracle: encrypting with CBC\n");
 		aes_cbc_encrypt(padded_in, out, *outlen, oracle->bits, key, iv);
-		free(iv);
+		if (!oracle->iv)
+			free(iv);
 	} else {
 		if (oracle->announce_encryption)
 			printf("oracle: encrypting with ECB\n");

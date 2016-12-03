@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
 	memset(in, 0, sizeof(in));
 	setup_oracle(&oracle, 5, NULL, 0, NULL, 0, ORACLE_MODE_RAND, 128, false,
-			true);
+			false, true);
 	for (i = 0; i < ITERATIONS; i++) {
 		out = encryption_oracle(in, sizeof(in), &oracle, &outlen);
 		if (!out) {
