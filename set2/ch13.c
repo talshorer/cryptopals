@@ -63,7 +63,7 @@ static char *encrypt_profile(struct profile *profile, size_t *outlen)
 	len = strlen("email=") + strlen(profile->email) +
 			strlen("&uid=xx&role=") +
 			strlen(role_strings[profile->role]) + 1;
-	len = get_padded_size(len, KEY_BYTES);
+	len = pkcs7_get_padded_size(len, KEY_BYTES);
 	in = malloc(len);
 	if (!in) {
 		perror("malloc");

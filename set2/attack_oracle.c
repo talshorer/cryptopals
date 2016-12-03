@@ -201,9 +201,9 @@ char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len)
 	*suffix_len = total_len - prefix_len;
 	printf("prefix length: %zd\n", prefix_len);
 	printf("suffix length: %zd\n", *suffix_len);
-	stimulus_prepend_len = get_padded_size(prefix_size_mod_block_size,
+	stimulus_prepend_len = pkcs7_get_padded_size(prefix_size_mod_block_size,
 			bytes) - prefix_size_mod_block_size;
-	stimulus_len = get_padded_size(*suffix_len + stimulus_prepend_len,
+	stimulus_len = pkcs7_get_padded_size(*suffix_len + stimulus_prepend_len,
 			bytes);
 	stimulus = malloc(stimulus_len);
 	if (!stimulus) {
@@ -224,10 +224,11 @@ char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len)
 	}
 	for (i = 0; i < *suffix_len; i++) {
 		stimulus_len = stimulus_prepend_len +
-				get_padded_size(i + 1, bytes);
+				pkcs7_get_padded_size(i + 1, bytes);
 		from_attacker = stimulus_prepend_len + bytes - 1 - i % bytes;
 		/* round for blocks */
-		offset = get_padded_size(prefix_len, bytes) + i - i % bytes;
+		offset = pkcs7_get_padded_size(prefix_len, bytes) +
+				i - i % bytes;
 		memset(stimulus, 0, from_attacker);
 		memcpy(stimulus + from_attacker, suffix, i);
 		for (j = 0; j < 0x100; j++) {
