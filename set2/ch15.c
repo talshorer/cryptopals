@@ -3,7 +3,7 @@
 #include <cryptopals/set2.h>
 
 #define print_padding_check(s) printf(#s " has %s padding\n", \
-		pkcs7_validate_padding(s, sizeof(s) - 1) ? "good" : "bad");
+		pkcs7_validate_padding(s, sizeof(s) - 1) ? "good" : "bad")
 
 int main(int argc, char *argv[])
 {

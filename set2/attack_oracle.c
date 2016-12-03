@@ -201,8 +201,9 @@ char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len)
 	*suffix_len = total_len - prefix_len;
 	printf("prefix length: %zd\n", prefix_len);
 	printf("suffix length: %zd\n", *suffix_len);
-	stimulus_prepend_len = pkcs7_get_padded_size(prefix_size_mod_block_size - 1,
-			bytes) - prefix_size_mod_block_size;
+	stimulus_prepend_len = pkcs7_get_padded_size(
+			prefix_size_mod_block_size - 1, bytes) -
+			prefix_size_mod_block_size;
 	stimulus_len = pkcs7_get_padded_size(*suffix_len + stimulus_prepend_len,
 			bytes);
 	stimulus = malloc(stimulus_len);

@@ -11,7 +11,7 @@
 int main(int argc, char *argv[])
 {
 	char key[40];
-	unsigned key_len = 0;
+	unsigned int key_len = 0;
 	size_t inputsize, outputsize;
 	char *encoutputbuf, *decoutputbuf;
 
