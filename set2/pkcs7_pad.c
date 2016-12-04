@@ -18,6 +18,8 @@ bool pkcs7_validate_padding(char *buf, size_t len)
 {
 	unsigned int i;
 
+	if (!buf[len - 1])
+		return false;
 	for (i = buf[len - 1]; i > 1; i--)
 		if (buf[len - i] != buf[len - 1])
 			return false;
