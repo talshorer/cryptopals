@@ -6,7 +6,7 @@
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
-static void fill_random_bytes(char *buf, unsigned int n)
+void fill_random_bytes(char *buf, unsigned int n)
 {
 	unsigned int i;
 
@@ -14,7 +14,7 @@ static void fill_random_bytes(char *buf, unsigned int n)
 		buf[i] = random() & 0xff;
 }
 
-static void *make_random_bytes(unsigned int n)
+void *make_random_bytes(unsigned int n)
 {
 	char *ret;
 

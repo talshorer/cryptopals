@@ -32,14 +32,12 @@ int main(int argc, char *argv[])
 	prefix_len = PREFIX_MIN_LENGTH +
 			random() % (1 + PREFIX_MAX_LENGTH - PREFIX_MIN_LENGTH);
 	printf("main: prefix_len = %zd, suffix_len = %zd\n", prefix_len, len);
-	prefix = malloc(prefix_len);
+	prefix = make_random_bytes(prefix_len);
 	if (!prefix) {
-		perror("malloc prefix");
+		perror("make_random_bytes prefix");
 		ret = 1;
 		goto fail_malloc_prefix;
 	}
-	for (i = 0; i < prefix_len; i++)
-		prefix[i] = random() & 0xff;
 	decode_base64(inputbuf, sizeof(inputbuf) - 1, suffix);
 	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, len,
 			ORACLE_MODE_ECB, 128, true, false, false))

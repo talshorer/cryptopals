@@ -12,6 +12,8 @@ extern void aes_cbc_encrypt(const char *in, char *out, size_t len,
 extern void aes_cbc_decrypt(const char *in, char *out, size_t len,
 		unsigned int bits, const char *key, const char *iv);
 
+extern void fill_random_bytes(char *buf, unsigned int n);
+extern void *make_random_bytes(unsigned int n);
 enum oracle_mode {
 	ORACLE_MODE_ECB,
 	ORACLE_MODE_CBC,

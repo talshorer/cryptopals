@@ -158,7 +158,6 @@ static char *encrypt_profile_for(const char *email, size_t *outlen)
 
 int main(int argc, char *argv[])
 {
-	unsigned int i;
 	char *e1;
 	char *e2;
 	char *e3;
@@ -166,8 +165,7 @@ int main(int argc, char *argv[])
 	struct profile *profile;
 	int ret = 1;
 
-	for (i = 0; i < KEY_BYTES; i++)
-		key[i] = random() & 0xff;
+	fill_random_bytes(key, KEY_BYTES);
 	e1 = encrypt_profile_for(normal_email, &len);
 	if (!e1) {
 		printf("fail to create e1\n");
