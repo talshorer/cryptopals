@@ -90,8 +90,7 @@ static bool verify_cookie(struct cookie *cookie)
 	}
 	aes_cbc_decrypt(cookie->ciphertext, plain, cookie->size,
 			BITS, key, cookie->iv);
-	ret = (unsigned char)plain[cookie->size - 1] <= BYTES &&
-			pkcs7_validate_padding(plain, cookie->size);
+	ret = pkcs7_validate_padding(plain, cookie->size);
 	free(plain);
 	return ret;
 }

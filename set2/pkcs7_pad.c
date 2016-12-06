@@ -17,11 +17,12 @@ size_t pkcs7_get_padded_size(size_t inlen, unsigned int bytes)
 bool pkcs7_validate_padding(char *buf, size_t len)
 {
 	unsigned int i;
+	unsigned int x = buf[len - 1];
 
-	if (!buf[len - 1])
+	if (!x || x > len)
 		return false;
-	for (i = buf[len - 1]; i > 1; i--)
-		if (buf[len - i] != buf[len - 1])
+	for (i = x; i > 1; i--)
+		if (buf[len - i] != x)
 			return false;
 	return true;
 }
