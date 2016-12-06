@@ -26,9 +26,9 @@ static void aes_cbc_crypt(const char *in, char *out, size_t len,
 		memset(vect, 0, bytes);
 
 	if (encrypt)
-		AES_set_encrypt_key((void *)key, bits, &aes_key);
+		AES_set_encrypt_key((const void *)key, bits, &aes_key);
 	else
-		AES_set_decrypt_key((void *)key, bits, &aes_key);
+		AES_set_decrypt_key((const void *)key, bits, &aes_key);
 	for (i = 0; i < len; i += bytes) {
 		if (encrypt) {
 			fixed_xor(&in[i], vect, bytes, vect);

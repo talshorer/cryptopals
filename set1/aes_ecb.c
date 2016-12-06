@@ -13,9 +13,9 @@ static void aes_ecb_crypt(const char *in, char *out, size_t len,
 	unsigned int bytes = bits / 8;
 
 	if (encrypt)
-		AES_set_encrypt_key((void *)key, bits, &aes_key);
+		AES_set_encrypt_key((const void *)key, bits, &aes_key);
 	else
-		AES_set_decrypt_key((void *)key, bits, &aes_key);
+		AES_set_decrypt_key((const void *)key, bits, &aes_key);
 	for (i = 0; i < len; i += bytes) {
 		if (encrypt)
 			AES_encrypt((void *)&in[i], (void *)&out[i], &aes_key);
