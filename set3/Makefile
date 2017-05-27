@@ -1,6 +1,6 @@
 THISDIR := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-_LIB_OBJS := aes_ctr.o
+_LIB_OBJS := aes_ctr.o mt19937.o
 
 OBJ += $(foreach o, $(shell ls $(THISDIR)/ch*.c),$(subst .c,.out,$(o)))
 
