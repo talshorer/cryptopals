@@ -31,31 +31,31 @@ static int english_score(const char *buf, size_t len)
 }
 
 static char *single_byte_xor(const char *in, size_t len, char *out,
-		char chiper)
+		char cipher)
 {
 	while (len--)
-		out[len] = in[len] ^ chiper;
+		out[len] = in[len] ^ cipher;
 	return out;
 }
 
 char crack_single_byte_xor(const char *in, size_t len, char *out)
 {
-	int chiper;
+	int cipher;
 	int score;
-	char best_chiper = 0;
+	char best_cipher = 0;
 	int best_score = 0;
 
-	for (chiper = 0x00; chiper < 0x100; chiper++) {
+	for (cipher = 0x00; cipher < 0x100; cipher++) {
 		score = english_score(
-			single_byte_xor(in, len, out, (char)chiper),
+			single_byte_xor(in, len, out, (char)cipher),
 			len
 		);
 		if (score > best_score) {
-			best_chiper = chiper;
+			best_cipher = cipher;
 			best_score = score;
 		}
 	}
 
-	single_byte_xor(in, len, out, best_chiper);
-	return best_chiper;
+	single_byte_xor(in, len, out, best_cipher);
+	return best_cipher;
 }
