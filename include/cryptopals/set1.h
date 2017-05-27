@@ -12,8 +12,8 @@ extern void fixed_xor(const char *a, const char *b, size_t len, char *buf);
 extern int char_english_score(char c);
 extern char crack_single_byte_xor(const char *in, size_t len, char *out);
 
-extern void repeating_key_xor(const char *, size_t, const char *, size_t,
-		char *);
+extern void repeating_key_xor(const char *in, size_t in_len, const char *key,
+		size_t key_len, char *out);
 
 extern unsigned int hamming_distance(const char *a, const char *b, size_t len);
 

@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 			perror("encryption_oracle");
 			break;
 		}
-		printf("main: detected %s\n",
+		printf("%s: detected %s\n", __func__,
 				detect_aes_ecb(out, outlen, 128, NULL, NULL) ?
 						"ECB" : "CBC");
 		free(out);

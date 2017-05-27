@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
 	}
 	prefix_len = PREFIX_MIN_LENGTH +
 			random() % (1 + PREFIX_MAX_LENGTH - PREFIX_MIN_LENGTH);
-	printf("main: prefix_len = %zd, suffix_len = %zd\n", prefix_len, len);
+	printf("%s: prefix_len = %zd, suffix_len = %zd\n", __func__, prefix_len,
+			len);
 	prefix = make_random_bytes(prefix_len);
 	if (!prefix) {
 		perror("make_random_bytes prefix");
