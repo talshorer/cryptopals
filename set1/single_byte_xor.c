@@ -7,7 +7,7 @@ int char_english_score(char c)
 	switch (c) {
 	case 'a'...'z': /* fallthrough */
 	case 'A'...'Z':
-		return 2;
+		return 4;
 	case '0'...'9': /* fallthrough */
 	case '\'': /* fallthrough */
 	case '\n': /* fallthrough */
@@ -15,6 +15,11 @@ int char_english_score(char c)
 	case ',': /* fallthrough */
 	case '.': /* fallthrough */
 	case ' ':
+		return 2;
+	case '!': /* fallthrough */
+	case '?': /* fallthrough */
+	case '-': /* fallthrough */
+	case '/':
 		return 1;
 	default:
 		return 0;
