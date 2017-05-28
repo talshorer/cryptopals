@@ -37,4 +37,6 @@ struct mt19937 {
 extern void mt19937_seed(struct mt19937 *mt, mt19937_int_t seed);
 extern mt19937_int_t mt19937_next(struct mt19937 *mt);
 
+extern void mt19937_clone(struct mt19937 *source, struct mt19937 *clone);
+
 #endif /* _SET3_H */
