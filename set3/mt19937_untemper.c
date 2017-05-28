@@ -26,16 +26,18 @@ static mt19937_int_t __mt19937_untemper(mt19937_int_t y, unsigned int s,
 	return y ^ (shift(x, s) & c);
 }
 
+#define mt19937_untemper_left(_y, _s, _c) __mt19937_untemper(_y, _s, _c, \
+		mt19937_shift_left, mt19937_shift_right)
+
+#define mt19937_untemper_right(_y, _s, _c) __mt19937_untemper(_y, _s, _c, \
+		mt19937_shift_right, mt19937_shift_left)
+
 static mt19937_int_t mt19937_untemper(mt19937_int_t y)
 {
-	y = __mt19937_untemper(y, MT19937_L, MT19937_MASK, mt19937_shift_right,
-			mt19937_shift_left);
-	y = __mt19937_untemper(y, MT19937_T, MT19937_C, mt19937_shift_left,
-			mt19937_shift_right);
-	y = __mt19937_untemper(y, MT19937_S, MT19937_B, mt19937_shift_left,
-			mt19937_shift_right);
-	y = __mt19937_untemper(y, MT19937_U, MT19937_D, mt19937_shift_right,
-			mt19937_shift_left);
+	y = mt19937_untemper_right(y, MT19937_L, MT19937_MASK);
+	y = mt19937_untemper_left(y, MT19937_T, MT19937_C);
+	y = mt19937_untemper_left(y, MT19937_S, MT19937_B);
+	y = mt19937_untemper_right(y, MT19937_U, MT19937_D);
 	return y;
 }
 
