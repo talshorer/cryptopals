@@ -63,7 +63,7 @@ void attack_random_access_aes_ctr(char *cipher, char *plain, size_t len,
 	unsigned int offset;
 	size_t step_len;
 
-	bzero(newtext, sizeof(newtext));
+	memset(newtext, 0, sizeof(newtext));
 	for (offset = 0; offset < len; offset += ATTACK_STEP) {
 		step_len = min_t(size_t, ATTACK_STEP, len - offset);
 		memcpy(buf, cipher + offset, step_len);

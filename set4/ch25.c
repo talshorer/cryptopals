@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	fill_random_bytes(key, sizeof(key));
 	fill_random_bytes(nonce, sizeof(nonce));
 	aes_ctr_crypt(plain, cipher, len, BITS, key, nonce, CTR_BIG_ENDIAN);
-	bzero(plain, len); /* destroy plaintext */
+	memset(plain, 0, len); /* destroy plaintext */
 	attack_random_access_aes_ctr(cipher, plain, len, BITS, key, nonce,
 			CTR_BIG_ENDIAN);
 	plain[len] = 0;
