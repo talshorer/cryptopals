@@ -32,12 +32,16 @@ $(eval $(foreach s,$(wildcard set*),$(call add-set-lib,$(s))))
 %.out: %.o
 	$(CC) $< -o $@ $(call cflags,$@) -lcryptopals
 
+ifeq ($(wildcard $(LIB)),)
 $(OBJ): $(LIB)
+endif
 
 $(LIB): $(LIB_OBJS)
 	$(CC) $^ -o $@ -shared $(call cflags,$@)
 
-all: $(LIB) $(OBJ)
+lib: $(LIB)
+
+all: lib $(OBJ)
 
 clean: clean-obj clean-backup
 
