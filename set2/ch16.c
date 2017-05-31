@@ -43,8 +43,9 @@ int main(int argc, char *argv[])
 	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, suffix_len,
 			ORACLE_MODE_CBC, 128, true, true, false))
 		goto fail_setup_oracle;
-	inlen = pkcs7_get_padded_size(prefix_len - 1, AES_BLOCK_SIZE) +
-			AES_BLOCK_SIZE * 2;
+	inlen = pkcs7_get_padded_size(prefix_len - 1, AES_BLOCK_SIZE) -
+			prefix_len + pkcs7_get_padded_size(target_len - 1,
+					AES_BLOCK_SIZE) + AES_BLOCK_SIZE;
 	in = malloc(inlen);
 	if (!in) {
 		perror("malloc in");
@@ -54,7 +55,8 @@ int main(int argc, char *argv[])
 	out = encryption_oracle(in, inlen, &oracle, &outlen);
 	if (!out)
 		goto fail_encryption_oracle;
-	outtarget = out + inlen - AES_BLOCK_SIZE * 2;
+	outtarget = out + prefix_len + inlen - (pkcs7_get_padded_size(target_len - 1,
+			AES_BLOCK_SIZE) + AES_BLOCK_SIZE);
 	fixed_xor(outtarget, target, target_len, outtarget);
 	printf("is_admin returned %d\n", is_admin(&oracle, out, outlen));
 	ret = 0;
