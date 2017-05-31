@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include <openssl/aes.h>
+
+extern void bigint_inc(char *x, size_t len, bool big_endian);
+extern void aes_ctr_setup(AES_KEY *aes_key, unsigned int bits, const char *key,
+		const char *nonce, char **ctr, char **keystream);
+extern void aes_ctr_do_crypt(const char *in, char *out, size_t len,
+		unsigned int bits, AES_KEY *aes_key, bool big_endian, char *ctr,
+		char *keystream);
 extern void aes_ctr_crypt(const char *in, char *out, size_t len,
 		unsigned int bits, const char *key, const char *nonce,
 		bool big_endian);
