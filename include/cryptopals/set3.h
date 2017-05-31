@@ -39,4 +39,17 @@ extern mt19937_int_t mt19937_next(struct mt19937 *mt);
 
 extern void mt19937_clone(struct mt19937 *source, struct mt19937 *clone);
 
+struct mt19937_crypt_ctx {
+	struct mt19937 mt;
+	unsigned int index;
+	mt19937_int_t value;
+};
+static inline void mt19937_crypt_seed(struct mt19937_crypt_ctx *ctx,
+		mt19937_int_t seed)
+{
+	mt19937_seed(&ctx->mt, seed);
+	ctx->index = MT19937_W / 8;
+}
+extern void mt19937_crypt(const char *in, char *out, size_t len,
+		struct mt19937_crypt_ctx *ctx);
 #endif /* _SET3_H */
