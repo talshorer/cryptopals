@@ -18,16 +18,15 @@ void aes_ctr_edit(char *ciphertext, unsigned int bits, const char *key,
 	char *plain;
 	AES_KEY aes_key;
 	unsigned int i;
-	unsigned int bytes = bits / 8;
-	size_t halfblock = bytes / 2;
-	unsigned int suboffset = offset % bytes;
+	size_t halfblock = AES_BLOCK_SIZE / 2;
+	unsigned int suboffset = offset % AES_BLOCK_SIZE;
 
 	plain = malloc(len + suboffset);
 	if (!plain) {
 		perror("malloc plain");
 		return;
 	}
-	ctr_copy = malloc(bytes);
+	ctr_copy = malloc(AES_BLOCK_SIZE);
 	if (!ctr_copy) {
 		perror("malloc ctr_copy");
 		goto fail_malloc_ctr_copy;
@@ -36,9 +35,9 @@ void aes_ctr_edit(char *ciphertext, unsigned int bits, const char *key,
 	if (!keystream)
 		goto fail_aes_ctr_setup;
 		offset -= suboffset;
-	for (i = 0; i < offset / bytes; i++)
+	for (i = 0; i < offset / AES_BLOCK_SIZE; i++)
 		bigint_inc(ctr + halfblock, halfblock, big_endian);
-	memcpy(ctr_copy, ctr, bytes);
+	memcpy(ctr_copy, ctr, AES_BLOCK_SIZE);
 	aes_ctr_do_crypt(ciphertext + offset, plain, len + suboffset, bits,
 			&aes_key, big_endian, ctr, keystream);
 	memcpy(plain + suboffset, newtext, len);

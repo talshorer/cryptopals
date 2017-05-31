@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <openssl/aes.h>
 
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
@@ -38,16 +39,15 @@ int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
 	oracle->suffix_len = suffix_len;
 	oracle->mode = mode;
 	oracle->bits = bits;
-	oracle->bytes = bits / 8;
 	if (constant_key) {
-		oracle->key = make_random_bytes(oracle->bytes);
+		oracle->key = make_random_bytes(AES_BLOCK_SIZE);
 		if (!oracle->key)
 			ret = 1;
 	} else {
 		oracle->key = NULL;
 	}
 	if (constant_iv) {
-		oracle->iv = make_random_bytes(oracle->bytes);
+		oracle->iv = make_random_bytes(AES_BLOCK_SIZE);
 		if (!oracle->iv)
 			ret = 1;
 	} else {
@@ -86,7 +86,7 @@ char *encryption_oracle(const char *in, size_t inlen,
 
 	*outlen = inlen + append_start + append_end +
 			oracle->prefix_len + oracle->suffix_len;
-	*outlen = pkcs7_get_padded_size(*outlen, oracle->bytes);
+	*outlen = pkcs7_get_padded_size(*outlen, AES_BLOCK_SIZE);
 	out = malloc(*outlen);
 	if (!out)
 		goto fail_malloc_out;
@@ -108,7 +108,7 @@ char *encryption_oracle(const char *in, size_t inlen,
 	if (oracle->key) {
 		key = oracle->key;
 	} else {
-		key = make_random_bytes(oracle->bytes);
+		key = make_random_bytes(AES_BLOCK_SIZE);
 		if (!key)
 			goto fail_malloc_key;
 	}
@@ -119,7 +119,7 @@ char *encryption_oracle(const char *in, size_t inlen,
 		if (oracle->iv) {
 			iv = oracle->iv;
 		} else {
-			iv = make_random_bytes(oracle->bytes);
+			iv = make_random_bytes(AES_BLOCK_SIZE);
 			if (!iv)
 				goto fail_malloc_iv;
 		}

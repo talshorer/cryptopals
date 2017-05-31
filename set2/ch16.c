@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/aes.h>
 
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
@@ -42,8 +43,8 @@ int main(int argc, char *argv[])
 	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, suffix_len,
 			ORACLE_MODE_CBC, 128, true, true, false))
 		goto fail_setup_oracle;
-	inlen = pkcs7_get_padded_size(prefix_len - 1, oracle.bytes) +
-			oracle.bytes * 2;
+	inlen = pkcs7_get_padded_size(prefix_len - 1, AES_BLOCK_SIZE) +
+			AES_BLOCK_SIZE * 2;
 	in = malloc(inlen);
 	if (!in) {
 		perror("malloc in");
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
 	out = encryption_oracle(in, inlen, &oracle, &outlen);
 	if (!out)
 		goto fail_encryption_oracle;
-	outtarget = out + inlen - oracle.bytes * 2;
+	outtarget = out + inlen - AES_BLOCK_SIZE * 2;
 	fixed_xor(outtarget, target, target_len, outtarget);
 	printf("is_admin returned %d\n", is_admin(&oracle, out, outlen));
 	ret = 0;

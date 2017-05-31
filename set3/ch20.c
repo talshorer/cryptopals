@@ -10,7 +10,6 @@
 #include "input20.c"
 
 #define BITS 128
-#define BYTES (BITS / 8)
 
 int main(int argc, char *argv[])
 {
@@ -26,12 +25,12 @@ int main(int argc, char *argv[])
 	char *breaker_in;
 	char *breaker_out;
 
-	ctr_key = make_random_bytes(BYTES);
+	ctr_key = make_random_bytes(BITS / 8);
 	if (!ctr_key) {
 		perror("malloc ctr_key");
 		goto fail_malloc_ctr_key;
 	}
-	nonce = make_random_bytes(BYTES / 2);
+	nonce = make_random_bytes(AES_BLOCK_SIZE / 2);
 	if (!nonce) {
 		perror("malloc nonce");
 		goto fail_malloc_nonce;

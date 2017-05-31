@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/aes.h>
 
 #include <cryptopals/core.h>
 #include <cryptopals/set1.h>
@@ -9,7 +10,6 @@
 #include "input17.c"
 
 #define BITS 128
-#define BYTES (BITS / 8)
 
 #define ITERATIONS 32
 
@@ -19,7 +19,7 @@ struct cookie {
 	size_t size;
 };
 
-static char key[BYTES];
+static char key[BITS / 8];
 
 static void init_cookie(struct cookie *cookie)
 {
@@ -37,13 +37,13 @@ static int fill_cookie(struct cookie *cookie)
 	inputbuf = input[random() % ARRAY_SIZE(input)];
 	base64_size = strlen(inputbuf);
 	plain_size = base64_size_to_plain_size(inputbuf, base64_size);
-	cookie->size = pkcs7_get_padded_size(plain_size, BYTES);
+	cookie->size = pkcs7_get_padded_size(plain_size, AES_BLOCK_SIZE);
 	plain = malloc(cookie->size);
 	if (!plain) {
 		perror("malloc plain");
 		goto fail_malloc_plain;
 	}
-	cookie->iv = make_random_bytes(BYTES);
+	cookie->iv = make_random_bytes(AES_BLOCK_SIZE);
 	if (!cookie->iv) {
 		perror("make_random_bytes cookie->iv");
 		goto fail_make_iv;
@@ -101,44 +101,46 @@ static void decipher_last_block(struct cookie *cookie, char *out)
 	char *prev_block_copy;
 	unsigned int i, padding;
 
-	prev_block = cookie->size == BYTES ? cookie->iv :
-			cookie->ciphertext + cookie->size - BYTES * 2;
-	prev_block_copy = malloc(BYTES);
+	prev_block = cookie->size == AES_BLOCK_SIZE ? cookie->iv :
+			cookie->ciphertext + cookie->size - AES_BLOCK_SIZE * 2;
+	prev_block_copy = malloc(AES_BLOCK_SIZE);
 	if (!prev_block_copy) {
 		perror("malloc prev_block_copy");
 		return;
 	}
-	memcpy(prev_block_copy, prev_block, BYTES);
+	memcpy(prev_block_copy, prev_block, AES_BLOCK_SIZE);
 	/* do we have valid padding to begin with? */
 	if (verify_cookie(cookie)) {
 		/* find how much padding we have */
-		for (i = 0; i < BYTES; i++) {
+		for (i = 0; i < AES_BLOCK_SIZE; i++) {
 			prev_block[i] ^= 0xff;
 			if (!verify_cookie(cookie))
 				break;
 		}
-		padding = BYTES - i;
-		for (; i < BYTES; i++)
+		padding = AES_BLOCK_SIZE - i;
+		for (; i < AES_BLOCK_SIZE; i++)
 			out[i] = padding;
 		/* restore the block */
-		memcpy(prev_block, prev_block_copy, BYTES);
+		memcpy(prev_block, prev_block_copy, AES_BLOCK_SIZE);
 	} else {
 		padding = 0;
 	}
-	for (; padding < BYTES; padding++) {
+	for (; padding < AES_BLOCK_SIZE; padding++) {
 		/* set the plaintext to the wanted padding */
 		for (i = 0; i < padding; i++)
-			prev_block[BYTES - 1 - i] ^= padding ^ (padding + 1);
+			prev_block[AES_BLOCK_SIZE - 1 - i] ^=
+					padding ^ (padding + 1);
 		/* find the next byte */
 		for (i = 0; i < 0x100; i++) {
-			prev_block[BYTES - 1 - padding] = i ^
-					prev_block_copy[BYTES - 1 - padding];
+			prev_block[AES_BLOCK_SIZE - 1 - padding] = i ^
+					prev_block_copy[AES_BLOCK_SIZE - 1 -
+							padding];
 			if (verify_cookie(cookie))
 				break;
 		}
-		out[BYTES - 1 - padding] = i ^ (padding + 1);
+		out[AES_BLOCK_SIZE - 1 - padding] = i ^ (padding + 1);
 	}
-	memcpy(prev_block, prev_block_copy, BYTES);
+	memcpy(prev_block, prev_block_copy, AES_BLOCK_SIZE);
 	free(prev_block_copy);
 }
 
@@ -160,9 +162,10 @@ int main(int argc, char *argv[])
 		if (!plain) {
 			perror("malloc plain");
 		} else {
-			for (; cookie.size; cookie.size -= BYTES)
+			for (; cookie.size; cookie.size -= AES_BLOCK_SIZE)
 				decipher_last_block(&cookie,
-						plain + cookie.size - BYTES);
+						plain + cookie.size -
+								AES_BLOCK_SIZE);
 			plain[size - plain[size - 1]] = 0;
 			printf("%s:\t\t%s\n", __func__, plain);
 			free(plain);

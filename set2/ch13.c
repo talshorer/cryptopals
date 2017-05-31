@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/aes.h>
 
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
 #define KEY_BITS 128
 #define PROFILE_MAX_EMAIL_LENGTH 64
-
-#define KEY_BYTES (KEY_BITS / 8)
 
 enum role {
 	ROLE_USER,
@@ -52,7 +51,7 @@ static struct profile *profile_for(const char *email)
 	return ret;
 }
 
-static char key[KEY_BYTES];
+static char key[KEY_BITS / 8];
 
 static char *encrypt_profile(struct profile *profile, size_t *outlen)
 {
@@ -63,7 +62,7 @@ static char *encrypt_profile(struct profile *profile, size_t *outlen)
 	len = strlen("email=") + strlen(profile->email) +
 			strlen("&uid=xx&role=") +
 			strlen(role_strings[profile->role]) + 1;
-	len = pkcs7_get_padded_size(len, KEY_BYTES);
+	len = pkcs7_get_padded_size(len, AES_BLOCK_SIZE);
 	in = malloc(len);
 	if (!in) {
 		perror("malloc");
@@ -165,7 +164,7 @@ int main(int argc, char *argv[])
 	struct profile *profile;
 	int ret = 1;
 
-	fill_random_bytes(key, KEY_BYTES);
+	fill_random_bytes(key, sizeof(key));
 	e1 = encrypt_profile_for(normal_email, &len);
 	if (!e1) {
 		printf("fail to create e1\n");

@@ -22,15 +22,14 @@ void bigint_inc(char *x, size_t len, bool big_endian)
 void aes_ctr_setup(AES_KEY *aes_key, unsigned int bits, const char *key,
 		const char *nonce, char **ctr, char **keystream)
 {
-	unsigned int bytes = bits / 8;
-	size_t halfblock = bytes / 2;
+	size_t halfblock = AES_BLOCK_SIZE / 2;
 
-	*ctr = malloc(bytes);
+	*ctr = malloc(AES_BLOCK_SIZE);
 	if (!*ctr) {
 		perror("malloc ctr");
 		return;
 	}
-	*keystream = malloc(bytes);
+	*keystream = malloc(AES_BLOCK_SIZE);
 	if (!*keystream) {
 		free(*ctr);
 		perror("malloc keystream");
@@ -45,13 +44,12 @@ void aes_ctr_do_crypt(const char *in, char *out, size_t len, unsigned int bits,
 		AES_KEY *aes_key, bool big_endian, char *ctr, char *keystream)
 {
 	unsigned int i;
-	unsigned int bytes = bits / 8;
-	size_t halfblock = bytes / 2;
+	size_t halfblock = AES_BLOCK_SIZE / 2;
 
-	for (i = 0; i < len; i += bytes) {
+	for (i = 0; i < len; i += AES_BLOCK_SIZE) {
 		AES_encrypt((void *)ctr, (void *)keystream, aes_key);
-		fixed_xor(&in[i], keystream, min_t(size_t, len - i, bytes),
-				&out[i]);
+		fixed_xor(&in[i], keystream, min_t(size_t, len - i,
+				AES_BLOCK_SIZE), &out[i]);
 		bigint_inc(ctr + halfblock, halfblock, big_endian);
 	}
 }

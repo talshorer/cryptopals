@@ -27,7 +27,6 @@ struct oracle {
 	size_t suffix_len;
 	enum oracle_mode mode;
 	unsigned int bits;
-	unsigned int bytes;
 	char *key;
 	char *iv;
 	bool announce_encryption;

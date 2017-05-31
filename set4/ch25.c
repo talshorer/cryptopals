@@ -12,8 +12,7 @@
 
 #define CTR_BIG_ENDIAN false
 
-#define BITS 128
-#define BYTES (BITS / 8)
+#define BITS 256
 
 static void *read_input(const char *argv0, size_t *len)
 {
@@ -46,8 +45,8 @@ int main(int argc, char *argv[])
 	size_t len;
 	char *plain;
 	char *cipher;
-	char key[BYTES];
-	char nonce[BYTES / 2];
+	char key[BITS / 8];
+	char nonce[AES_BLOCK_SIZE / 2];
 	int ret = 1;
 
 	plain = read_input(argv[0], &len);
