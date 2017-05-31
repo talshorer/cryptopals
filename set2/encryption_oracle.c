@@ -55,7 +55,7 @@ int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
 			ret = 1;
 	} else {
 		/* ctr requires a constant nonce */
-		if (mode != ORACLE_MODE_CTR)
+		if (mode == ORACLE_MODE_CTR)
 			ret = 1;
 		oracle->iv = NULL;
 	}
