@@ -1,4 +1,4 @@
-CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L. -Iinclude
+CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L. -Iinclude -g
 
 CLEAN = @find . -name "$(1)" -exec rm -f {} \;
 
