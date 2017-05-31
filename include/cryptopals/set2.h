@@ -18,6 +18,7 @@ enum oracle_mode {
 	ORACLE_MODE_ECB,
 	ORACLE_MODE_CBC,
 	ORACLE_MODE_RAND,
+	ORACLE_MODE_CTR,
 };
 struct oracle {
 	size_t append_base;
@@ -40,5 +41,12 @@ extern char *encryption_oracle(const char *in, size_t inlen,
 		const struct oracle *oracle, size_t *outlen);
 
 extern char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len);
+
+typedef void (*admin_decrypt_t)(struct oracle *oracle, const char *cipher,
+		char *plain, size_t len);
+extern const size_t admin_prefix_len;
+extern const size_t admin_target_len;
+extern int admin_attack(size_t inlen, enum oracle_mode mode,
+		admin_decrypt_t decrypt);
 
 #endif /* _SET2_H */

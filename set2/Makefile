@@ -1,1 +1,1 @@
-lib += pkcs7_pad.o aes_cbc.o encryption_oracle.o attack_oracle.o
+lib += pkcs7_pad.o aes_cbc.o encryption_oracle.o attack_oracle.o admin.o

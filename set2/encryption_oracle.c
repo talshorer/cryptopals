@@ -6,6 +6,7 @@
 
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
+#include <cryptopals/set3.h>
 
 void fill_random_bytes(char *buf, unsigned int n)
 {
@@ -47,10 +48,15 @@ int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
 		oracle->key = NULL;
 	}
 	if (constant_iv) {
-		oracle->iv = make_random_bytes(AES_BLOCK_SIZE);
+		/* we use oracle->iv as the nonce in ctr mode */
+		oracle->iv = make_random_bytes(mode == ORACLE_MODE_CTR ?
+				AES_BLOCK_SIZE / 2 : AES_BLOCK_SIZE);
 		if (!oracle->iv)
 			ret = 1;
 	} else {
+		/* ctr requires a constant nonce */
+		if (mode != ORACLE_MODE_CTR)
+			ret = 1;
 		oracle->iv = NULL;
 	}
 	oracle->announce_encryption = announce_encryption;
@@ -112,7 +118,10 @@ char *encryption_oracle(const char *in, size_t inlen,
 		if (!key)
 			goto fail_malloc_key;
 	}
-	if (oracle->mode == ORACLE_MODE_CBC ||
+	if (oracle->mode == ORACLE_MODE_CTR) {
+		aes_ctr_crypt(padded_in, out, *outlen, oracle->bits, key,
+				oracle->iv, false);
+	} else if (oracle->mode == ORACLE_MODE_CBC ||
 			(oracle->mode == ORACLE_MODE_RAND && (random() & 1))) {
 		char *iv;
 

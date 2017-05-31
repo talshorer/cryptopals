@@ -1,70 +1,20 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <openssl/aes.h>
 
-#include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
-static const char prefix[] = "comment1=cooking%20MCs;userdata=";
-#define prefix_len (sizeof(prefix) - 1)
-static const char suffix[] = ";comment2=%20like%20a%20pound%20of%20bacon";
-#define suffix_len (sizeof(suffix) - 1)
-static const char target[] = ";admin=true;";
-#define target_len (sizeof(target) - 1)
-
-static bool is_admin(struct oracle *oracle, const char *ciphertext, size_t len)
+void decrypt_cbc(struct oracle *oracle, const char *cipher,
+		char *plain, size_t len)
 {
-	char *plain;
-	void *ret;
-
-	plain = malloc(len);
-	if (!plain) {
-		perror("malloc plain");
-		return false;
-	}
-	aes_cbc_decrypt(ciphertext, plain, len, oracle->bits,
-			oracle->key, oracle->iv);
-	ret = memmem(plain, len, target, target_len);
-	free(plain);
-	return !!ret;
+	aes_cbc_decrypt(cipher, plain, len, oracle->bits, oracle->key,
+			oracle->iv);
 }
 
 int main(int argc, char *argv[])
 {
-	struct oracle oracle;
-	char *in;
-	size_t inlen;
-	char *out;
-	size_t outlen;
-	char *outtarget;
-	int ret = 1;
-
-	if (setup_oracle(&oracle, 0, prefix, prefix_len, suffix, suffix_len,
-			ORACLE_MODE_CBC, 128, true, true, false))
-		goto fail_setup_oracle;
-	inlen = pkcs7_get_padded_size(prefix_len - 1, AES_BLOCK_SIZE) -
-			prefix_len + pkcs7_get_padded_size(target_len - 1,
-					AES_BLOCK_SIZE) + AES_BLOCK_SIZE;
-	in = malloc(inlen);
-	if (!in) {
-		perror("malloc in");
-		goto fail_malloc_in;
-	}
-	memset(in, 0, inlen);
-	out = encryption_oracle(in, inlen, &oracle, &outlen);
-	if (!out)
-		goto fail_encryption_oracle;
-	outtarget = out + prefix_len + inlen - (pkcs7_get_padded_size(target_len - 1,
-			AES_BLOCK_SIZE) + AES_BLOCK_SIZE);
-	fixed_xor(outtarget, target, target_len, outtarget);
-	printf("is_admin returned %d\n", is_admin(&oracle, out, outlen));
-	ret = 0;
-	free(out);
-fail_encryption_oracle:
-	free(in);
-fail_malloc_in:
-	cleanup_oracle(&oracle);
-fail_setup_oracle:
-	return ret;
+	return admin_attack(pkcs7_get_padded_size(admin_prefix_len - 1,
+			AES_BLOCK_SIZE) - admin_prefix_len +
+			pkcs7_get_padded_size(admin_target_len - 1,
+					AES_BLOCK_SIZE) + AES_BLOCK_SIZE,
+			ORACLE_MODE_CBC, decrypt_cbc);
 }
