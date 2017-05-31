@@ -1,7 +1,1 @@
-THISDIR := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
-
-_LIB_OBJS := aes_ctr.o mt19937.o mt19937_untemper.o mt19937_crypt.o
-
-OBJ += $(foreach o, $(shell ls $(THISDIR)/ch*.c),$(subst .c,.out,$(o)))
-
-LIB_OBJS += $(foreach o,$(_LIB_OBJS),$(THISDIR)/$(o))
+lib += aes_ctr.o mt19937.o mt19937_untemper.o mt19937_crypt.o

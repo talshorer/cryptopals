@@ -10,16 +10,29 @@ cflags = $(CFLAGS) $($(1)_CFLAGS) $($(1)_LIBS:%=-l%)
 
 default: all
 
-LIB_OBJS :=
-OBJ :=
+OBJ := $(foreach o, $(wildcard set*/ch*.c),$(subst .c,.out,$(o)))
 
-include set*/Makefile
+LIB_OBJS :=
+
+define get-set-lib
+lib =
+include $(1)/Makefile
+endef # get-set-lib
+
+define add-set-lib
+$(eval $(call get-set-lib,$(1)))
+LIB_OBJS += $(foreach o,$(lib),$(1)/$(o))
+endef # add-set-lib
+
+$(eval $(foreach s,$(wildcard set*),$(call add-set-lib,$(s))))
 
 %.o: %.c
 	$(CC) -c $< -o $@ $(call cflags,$@)
 
 %.out: %.o
 	$(CC) $< -o $@ $(call cflags,$@) -lcryptopals
+
+$(OBJ): $(LIB)
 
 $(LIB): $(LIB_OBJS)
 	$(CC) $^ -o $@ -shared $(call cflags,$@)
@@ -35,6 +48,3 @@ clean-obj:
 
 clean-backup:
 	$(call CLEAN,*~)
-
-%.gen.txt: %.txt
-	tr -d '\n' < $< > $@
