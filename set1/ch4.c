@@ -3,7 +3,7 @@
 #include <cryptopals/core.h>
 #include <cryptopals/set1.h>
 
-static int all_english(const char *buf, size_t len)
+static int all_english(const unsigned char *buf, size_t len)
 {
 	while (len--)
 		if (!char_english_score(buf[len]))
@@ -15,7 +15,7 @@ static int all_english(const char *buf, size_t len)
 
 int main(int argc, char *argv[])
 {
-	char buf[INPUTLEN + 1];
+	unsigned char buf[INPUTLEN + 1];
 	unsigned int i;
 
 	buf[INPUTLEN] = 0;

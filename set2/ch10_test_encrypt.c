@@ -4,11 +4,11 @@
 
 #include <cryptopals/set2.h>
 
-static const char message[] = "Hello, world!\n"
+static const unsigned char message[] = "Hello, world!\n"
 		"What a lovely day!\n"
 		"Jibber Jabber this should be multiple blocks\n";
 
-static const char key[] = "YELLOW SUBMARINE";
+static const unsigned char key[] = "YELLOW SUBMARINE";
 
 #define key_size (sizeof(key) - 1)
 
@@ -17,12 +17,12 @@ static const char key[] = "YELLOW SUBMARINE";
 
 int main(int argc, char *argv[])
 {
-	char encrypted[padded_message_size];
-	char decrypted[padded_message_size];
-	char iv[key_size];
+	unsigned char encrypted[padded_message_size];
+	unsigned char decrypted[padded_message_size];
+	unsigned char iv[key_size];
 	unsigned int i;
 
-	strcpy(decrypted, message);
+	memcpy(decrypted, message, sizeof(message));
 	pkcs7_pad(decrypted, sizeof(message), padded_message_size);
 
 	for (i = 0; i < key_size; i++)

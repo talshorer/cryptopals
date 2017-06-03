@@ -8,7 +8,7 @@
 #include <cryptopals/set2.h>
 #include <cryptopals/set3.h>
 
-void fill_random_bytes(char *buf, unsigned int n)
+void fill_random_bytes(unsigned char *buf, unsigned int n)
 {
 	unsigned int i;
 
@@ -18,7 +18,7 @@ void fill_random_bytes(char *buf, unsigned int n)
 
 void *make_random_bytes(unsigned int n)
 {
-	char *ret;
+	unsigned char *ret;
 
 	ret = malloc(n);
 	if (ret)
@@ -26,8 +26,9 @@ void *make_random_bytes(unsigned int n)
 	return ret;
 }
 
-int setup_oracle(struct oracle *oracle, size_t append_base, const char *prefix,
-		size_t prefix_len, const char *suffix, size_t suffix_len,
+int setup_oracle(struct oracle *oracle, size_t append_base,
+		const unsigned char *prefix, size_t prefix_len,
+		const unsigned char *suffix, size_t suffix_len,
 		enum oracle_mode mode, unsigned int bits, bool constant_key,
 		bool constant_iv, bool announce_encryption)
 {
@@ -77,17 +78,17 @@ void cleanup_oracle(struct oracle *oracle)
 		free(oracle->iv);
 }
 
-char *encryption_oracle(const char *in, size_t inlen,
+unsigned char *encryption_oracle(const unsigned char *in, size_t inlen,
 		const struct oracle *oracle, size_t *outlen)
 {
 	size_t append_start = oracle->append_base +
 			random() % (oracle->append_base + 1);
 	size_t append_end = oracle->append_base +
 			random() % (oracle->append_base + 1);
-	char *out;
-	char *padded_in;
-	char *p;
-	char *key = NULL;
+	unsigned char *out;
+	unsigned char *padded_in;
+	unsigned char *p;
+	unsigned char *key = NULL;
 	bool failed = true;
 
 	*outlen = inlen + append_start + append_end +
@@ -123,7 +124,7 @@ char *encryption_oracle(const char *in, size_t inlen,
 				oracle->iv, false);
 	} else if (oracle->mode == ORACLE_MODE_CBC ||
 			(oracle->mode == ORACLE_MODE_RAND && (random() & 1))) {
-		char *iv;
+		unsigned char *iv;
 
 		if (oracle->iv) {
 			iv = oracle->iv;

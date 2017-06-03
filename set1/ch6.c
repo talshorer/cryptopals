@@ -10,10 +10,10 @@
 
 int main(int argc, char *argv[])
 {
-	char key[40];
+	unsigned char key[40];
 	unsigned int key_len = 0;
 	size_t inputsize, outputsize;
-	char *encoutputbuf, *decoutputbuf;
+	unsigned char *encoutputbuf, *decoutputbuf;
 
 	inputsize = sizeof(inputbuf) - 1;
 

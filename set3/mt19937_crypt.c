@@ -1,6 +1,6 @@
 #include <cryptopals/set3.h>
 
-void mt19937_crypt(const char *in, char *out, size_t len,
+void mt19937_crypt(const unsigned char *in, unsigned char *out, size_t len,
 		struct mt19937_crypt_ctx *ctx)
 {
 	while (len--) {

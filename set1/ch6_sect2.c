@@ -2,8 +2,8 @@
 
 #include <cryptopals/set1.h>
 
-static const char a[] = "this is a test";
-static const char b[] = "wokka wokka!!!";
+static const unsigned char a[] = "this is a test";
+static const unsigned char b[] = "wokka wokka!!!";
 
 int main(int argc, char *argv[])
 {

@@ -4,7 +4,7 @@
 
 #include <cryptopals/set1.h>
 
-bool detect_aes_ecb(const char *buf, size_t len, unsigned int bits,
+bool detect_aes_ecb(const unsigned char *buf, size_t len, unsigned int bits,
 		unsigned int *matches, unsigned int *maxmatches)
 {
 	unsigned int block = bits / 8;

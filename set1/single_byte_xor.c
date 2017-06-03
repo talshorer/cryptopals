@@ -2,7 +2,7 @@
 
 #include <cryptopals/set1.h>
 
-int char_english_score(char c)
+int char_english_score(unsigned char c)
 {
 	switch (c) {
 	case 'a'...'z': /* fallthrough */
@@ -26,7 +26,7 @@ int char_english_score(char c)
 	}
 }
 
-static int english_score(const char *buf, size_t len)
+static int english_score(const unsigned char *buf, size_t len)
 {
 	int score = 0;
 
@@ -35,24 +35,25 @@ static int english_score(const char *buf, size_t len)
 	return score;
 }
 
-static char *single_byte_xor(const char *in, size_t len, char *out,
-		char cipher)
+static unsigned char *single_byte_xor(const unsigned char *in, size_t len,
+		unsigned char *out, unsigned char cipher)
 {
 	while (len--)
 		out[len] = in[len] ^ cipher;
 	return out;
 }
 
-char crack_single_byte_xor(const char *in, size_t len, char *out)
+unsigned char crack_single_byte_xor(const unsigned char *in, size_t len,
+		unsigned char *out)
 {
 	int cipher;
 	int score;
-	char best_cipher = 0;
+	unsigned char best_cipher = 0;
 	int best_score = 0;
 
 	for (cipher = 0x00; cipher < 0x100; cipher++) {
 		score = english_score(
-			single_byte_xor(in, len, out, (char)cipher),
+			single_byte_xor(in, len, out, (unsigned char)cipher),
 			len
 		);
 		if (score > best_score) {

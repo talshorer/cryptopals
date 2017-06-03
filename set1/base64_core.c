@@ -35,7 +35,7 @@ static const char base64_tbl[] = {
 
 #define base64_byte(...) (base64_tbl[index(__VA_ARGS__)])
 
-void encode_base64(const char *in, size_t len, char *out)
+void encode_base64(const unsigned char *in, size_t len, char *out)
 {
 	unsigned int i, j = 0;
 
@@ -74,11 +74,11 @@ size_t base64_size_to_plain_size(const char *in, size_t len)
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-int decode_base64(const char *in, size_t len, char *out)
+int decode_base64(const char *in, size_t len, unsigned char *out)
 {
 	unsigned int i, o, j, k;
 	unsigned int pad = 0;
-	char c;
+	unsigned char c;
 	uint32_t v;
 
 	for (i = 0, o = 0; i < len; i += 4, o += 3) {

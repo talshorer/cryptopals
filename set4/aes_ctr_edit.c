@@ -8,14 +8,15 @@
 #include <cryptopals/set3.h>
 #include <cryptopals/set4.h>
 
-void aes_ctr_edit(char *ciphertext, unsigned int bits, const char *key,
-		const char *nonce,  bool big_endian, unsigned int offset,
-		const char *newtext, size_t len)
+void aes_ctr_edit(unsigned char *ciphertext, unsigned int bits,
+		const unsigned char *key, const unsigned char *nonce,
+		bool big_endian, unsigned int offset,
+		const unsigned char *newtext, size_t len)
 {
-	char *ctr;
-	char *ctr_copy;
-	char *keystream;
-	char *plain;
+	unsigned char *ctr;
+	unsigned char *ctr_copy;
+	unsigned char *keystream;
+	unsigned char *plain;
 	AES_KEY aes_key;
 	unsigned int i;
 	size_t halfblock = AES_BLOCK_SIZE / 2;
@@ -54,12 +55,12 @@ fail_malloc_ctr_copy:
 
 #define ATTACK_STEP 14 /* arbitrary */
 
-void attack_random_access_aes_ctr(char *cipher, char *plain, size_t len,
-		unsigned int bits, const char *key, const char *nonce,
-		bool big_endian)
+void attack_random_access_aes_ctr(unsigned char *cipher, unsigned char *plain,
+		size_t len, unsigned int bits, const unsigned char *key,
+		const unsigned char *nonce, bool big_endian)
 {
-	char newtext[ATTACK_STEP];
-	char buf[ATTACK_STEP];
+	unsigned char newtext[ATTACK_STEP];
+	unsigned char buf[ATTACK_STEP];
 	unsigned int offset;
 	size_t step_len;
 

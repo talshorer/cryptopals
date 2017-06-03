@@ -14,16 +14,16 @@
 int main(int argc, char *argv[])
 {
 	int ret = 1;
-	char *ciphers[ARRAY_SIZE(input)];
-	char plain[0x100]; /* should be big enough */
+	unsigned char *ciphers[ARRAY_SIZE(input)];
+	unsigned char plain[0x100]; /* should be big enough */
 	size_t size, base64_size;
 	size_t min_size = (size_t)-1;
 	unsigned int i, j;
-	char *ctr_key;
-	char *keystream;
-	char *nonce;
-	char *breaker_in;
-	char *breaker_out;
+	unsigned char *ctr_key;
+	unsigned char *keystream;
+	unsigned char *nonce;
+	unsigned char *breaker_in;
+	unsigned char *breaker_out;
 
 	ctr_key = make_random_bytes(BITS / 8);
 	if (!ctr_key) {

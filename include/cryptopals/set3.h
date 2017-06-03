@@ -7,15 +7,16 @@
 
 #include <openssl/aes.h>
 
-extern void bigint_inc(char *x, size_t len, bool big_endian);
-extern void aes_ctr_setup(AES_KEY *aes_key, unsigned int bits, const char *key,
-		const char *nonce, char **ctr, char **keystream);
-extern void aes_ctr_do_crypt(const char *in, char *out, size_t len,
-		unsigned int bits, AES_KEY *aes_key, bool big_endian, char *ctr,
-		char *keystream);
-extern void aes_ctr_crypt(const char *in, char *out, size_t len,
-		unsigned int bits, const char *key, const char *nonce,
-		bool big_endian);
+extern void bigint_inc(unsigned char *x, size_t len, bool big_endian);
+extern void aes_ctr_setup(AES_KEY *aes_key, unsigned int bits,
+		const unsigned char *key, const unsigned char *nonce,
+		unsigned char **ctr, unsigned char **keystream);
+extern void aes_ctr_do_crypt(const unsigned char *in, unsigned char *out,
+		size_t len, unsigned int bits, AES_KEY *aes_key,
+		bool big_endian, unsigned char *ctr, unsigned char *keystream);
+extern void aes_ctr_crypt(const unsigned char *in, unsigned char *out,
+		size_t len, unsigned int bits, const unsigned char *key,
+		const unsigned char *nonce, bool big_endian);
 
 #define MT19937_N 624
 #define MT19937_W 32
@@ -58,6 +59,6 @@ static inline void mt19937_crypt_seed(struct mt19937_crypt_ctx *ctx,
 	mt19937_seed(&ctx->mt, seed);
 	ctx->index = MT19937_W / 8;
 }
-extern void mt19937_crypt(const char *in, char *out, size_t len,
-		struct mt19937_crypt_ctx *ctx);
+extern void mt19937_crypt(const unsigned char *in, unsigned char *out,
+		size_t len, struct mt19937_crypt_ctx *ctx);
 #endif /* _SET3_H */

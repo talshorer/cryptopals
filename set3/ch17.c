@@ -14,12 +14,12 @@
 #define ITERATIONS 32
 
 struct cookie {
-	char *iv;
-	char *ciphertext;
+	unsigned char *iv;
+	unsigned char *ciphertext;
 	size_t size;
 };
 
-static char key[BITS / 8];
+static unsigned char key[BITS / 8];
 
 static void init_cookie(struct cookie *cookie)
 {
@@ -30,7 +30,7 @@ static int fill_cookie(struct cookie *cookie)
 {
 	const char *inputbuf;
 	size_t base64_size;
-	char *plain;
+	unsigned char *plain;
 	size_t plain_size;
 	int ret = -1;
 
@@ -80,7 +80,7 @@ static void put_cookie(struct cookie *cookie)
 
 static bool verify_cookie(struct cookie *cookie)
 {
-	char *plain;
+	unsigned char *plain;
 	bool ret;
 
 	plain = malloc(cookie->size);
@@ -95,10 +95,10 @@ static bool verify_cookie(struct cookie *cookie)
 	return ret;
 }
 
-static void decipher_last_block(struct cookie *cookie, char *out)
+static void decipher_last_block(struct cookie *cookie, unsigned char *out)
 {
-	char *prev_block;
-	char *prev_block_copy;
+	unsigned char *prev_block;
+	unsigned char *prev_block_copy;
 	unsigned int i, padding;
 
 	prev_block = cookie->size == AES_BLOCK_SIZE ? cookie->iv :
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 	struct cookie cookie;
 	unsigned int i;
 	size_t size;
-	char *plain;
+	unsigned char *plain;
 
 	fill_random_bytes(key, sizeof(key));
 	init_cookie(&cookie);

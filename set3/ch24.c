@@ -8,14 +8,14 @@
 #define CH24_ORACLE_RANDLEN_MAX 0x40
 #define SEED_MAX (1 << 16)
 
-static const char known[] = "AAAAAAAAAAAAAA";
+static const unsigned char known[] = "AAAAAAAAAAAAAA";
 #define known_len (sizeof(known) - 1)
 
-static char *ch24_oracle(size_t *outlen)
+static unsigned char *ch24_oracle(size_t *outlen)
 {
 	size_t randlen;
-	char *in;
-	char *out = NULL;
+	unsigned char *in;
+	unsigned char *out = NULL;
 	struct mt19937_crypt_ctx ctx;
 	mt19937_int_t seed;
 
@@ -46,8 +46,8 @@ out:
 
 int main(int argc, char *argv[])
 {
-	char *cipher;
-	char *plain;
+	unsigned char *cipher;
+	unsigned char *plain;
 	size_t len;
 	unsigned int i;
 	int ret = 1;

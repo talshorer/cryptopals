@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
 {
 	int ret;
 	size_t inputsize, outputsize, mallocsize;
-	char *encoutputbuf, *decoutputbuf;
-	const char *key = "YELLOW SUBMARINE";
+	unsigned char *encoutputbuf, *decoutputbuf;
+	const unsigned char key[] = "YELLOW SUBMARINE";
 
 	inputsize = sizeof(inputbuf) - 1;
 	/* might be a bit more than needed if the base64 input is padded */
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 		goto fail_malloc_encoutput;
 	}
 	memset(encoutputbuf, 0, mallocsize);
-	decode_base64(inputbuf, inputsize, (void *)encoutputbuf);
+	decode_base64(inputbuf, inputsize, encoutputbuf);
 	decoutputbuf = malloc(mallocsize);
 	if (!decoutputbuf) {
 		perror("malloc decoutput");

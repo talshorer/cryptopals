@@ -8,15 +8,15 @@
 
 #define BITS (AES_BLOCK_SIZE * 8) /* so that we can use the key as an IV */
 
-static char ch27_oracle_key[BITS / 8];
+static unsigned char ch27_oracle_key[BITS / 8];
 
-static void print_key(const char *func, const char *buf)
+static void print_key(const char *func, const unsigned char *buf)
 {
 	unsigned int i;
 
 	printf("%16s: key: ", func);
 	for (i = 0; i < sizeof(ch27_oracle_key); i++)
-		printf("%02x", (unsigned char)buf[i]);
+		printf("%02x", buf[i]);
 	printf("\n");
 }
 
@@ -29,7 +29,8 @@ static void ch27_oracle_init(void)
 #define ch27_oracle_encrypt(plain, cipher, len) aes_cbc_encrypt(plain, cipher, \
 		len, BITS, ch27_oracle_key, ch27_oracle_key)
 
-static bool ch27_oracle_decrypt(const char *cipher, char *plain, size_t len)
+static bool ch27_oracle_decrypt(const unsigned char *cipher,
+		unsigned char *plain, size_t len)
 {
 	aes_cbc_decrypt(cipher, plain, len, BITS, ch27_oracle_key,
 			ch27_oracle_key);
@@ -45,8 +46,8 @@ static bool ch27_oracle_decrypt(const char *cipher, char *plain, size_t len)
 
 int main(int argc, char *argv[])
 {
-	char *cipher;
-	char *plain;
+	unsigned char *cipher;
+	unsigned char *plain;
 	int ret = 1;
 
 	ch27_oracle_init();
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
 	 */
 	fixed_xor(plain, plain + AES_BLOCK_SIZE * 2, AES_BLOCK_SIZE, cipher);
 	print_key(__func__, cipher);
+	ret = 0;
 
 	free(cipher);
 fail_malloc_cipher:

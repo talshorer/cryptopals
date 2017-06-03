@@ -13,10 +13,10 @@
 int main(int argc, char *argv[])
 {
 	struct oracle oracle;
-	char *prefix;
+	unsigned char *prefix;
 	size_t prefix_len;
-	char *suffix;
-	char *out;
+	unsigned char *suffix;
+	unsigned char *out;
 	size_t len, outlen;
 	int ret;
 	unsigned int i;

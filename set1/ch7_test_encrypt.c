@@ -4,11 +4,11 @@
 
 #include <cryptopals/set1.h>
 
-static const char message[] = "Hello, world!\n"
+static const unsigned char message[] = "Hello, world!\n"
 		"What a lovely day!\n"
 		"Jibber Jabber this should be multiple blocks\n";
 
-static const char key[] = "YELLOW SUBMARINE";
+static const unsigned char key[] = "YELLOW SUBMARINE";
 
 #define key_size (sizeof(key) - 1)
 
@@ -17,11 +17,11 @@ static const char key[] = "YELLOW SUBMARINE";
 
 int main(int argc, char *argv[])
 {
-	char encrypted[padded_message_size];
-	char decrypted[padded_message_size];
+	unsigned char encrypted[padded_message_size];
+	unsigned char decrypted[padded_message_size];
 
 	memset(decrypted, 0, sizeof(decrypted));
-	strcpy(decrypted, message);
+	memcpy(decrypted, message, sizeof(message));
 
 	aes_ecb_encrypt(decrypted, encrypted, padded_message_size, key_size * 8,
 			key);

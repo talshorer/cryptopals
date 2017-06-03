@@ -43,10 +43,10 @@ static void *read_input(const char *argv0, size_t *len)
 int main(int argc, char *argv[])
 {
 	size_t len;
-	char *plain;
-	char *cipher;
-	char key[BITS / 8];
-	char nonce[AES_BLOCK_SIZE / 2];
+	unsigned char *plain;
+	unsigned char *cipher;
+	unsigned char key[BITS / 8];
+	unsigned char nonce[AES_BLOCK_SIZE / 2];
 	int ret = 1;
 
 	plain = read_input(argv[0], &len);

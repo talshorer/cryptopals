@@ -4,21 +4,21 @@
 
 #include <cryptopals/set3.h>
 
-static const char message[] = "Hello, world!\n"
+static const unsigned char message[] = "Hello, world!\n"
 		"What a lovely day!\n"
 		"Jibber Jabber this should be multiple blocks\n";
 
-static const char key[] = "YELLOW SUBMARINE";
+static const unsigned char key[] = "YELLOW SUBMARINE";
 
 #define key_size (sizeof(key) - 1)
 
 int main(int argc, char *argv[])
 {
-	char encrypted[sizeof(message)];
-	char decrypted[sizeof(message)];
-	char nonce[] = { 0xde, 0xea, 0xbe, 0xef, 'd', 'e', 'a', 'd' };
+	unsigned char encrypted[sizeof(message)];
+	unsigned char decrypted[sizeof(message)];
+	unsigned char nonce[] = { 0xde, 0xea, 0xbe, 0xef, 'd', 'e', 'a', 'd' };
 
-	strcpy(decrypted, message);
+	memcpy(decrypted, message, sizeof(message));
 	aes_ctr_crypt(decrypted, encrypted, sizeof(message), key_size * 8, key,
 			nonce, true);
 	memset(decrypted, 0, sizeof(message));

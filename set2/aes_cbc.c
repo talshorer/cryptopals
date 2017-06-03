@@ -6,11 +6,11 @@
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
-static void aes_cbc_crypt(const char *in, char *out, size_t len,
-		unsigned int bits, const char *key, const char *iv,
-		bool encrypt)
+static void aes_cbc_crypt(const unsigned char *in, unsigned char *out,
+		size_t len, unsigned int bits, const unsigned char *key,
+		const unsigned char *iv, bool encrypt)
 {
-	char *vect;
+	unsigned char *vect;
 	unsigned int i;
 	AES_KEY aes_key;
 
@@ -25,16 +25,16 @@ static void aes_cbc_crypt(const char *in, char *out, size_t len,
 		memset(vect, 0, AES_BLOCK_SIZE);
 
 	if (encrypt)
-		AES_set_encrypt_key((const void *)key, bits, &aes_key);
+		AES_set_encrypt_key(key, bits, &aes_key);
 	else
-		AES_set_decrypt_key((const void *)key, bits, &aes_key);
+		AES_set_decrypt_key(key, bits, &aes_key);
 	for (i = 0; i < len; i += AES_BLOCK_SIZE) {
 		if (encrypt) {
 			fixed_xor(&in[i], vect, AES_BLOCK_SIZE, vect);
-			AES_encrypt((void *)vect, (void *)&out[i], &aes_key);
+			AES_encrypt(vect, &out[i], &aes_key);
 			memcpy(vect, &out[i], AES_BLOCK_SIZE);
 		} else {
-			AES_decrypt((void *)&in[i], (void *)&out[i], &aes_key);
+			AES_decrypt(&in[i], &out[i], &aes_key);
 			fixed_xor(&out[i], vect, AES_BLOCK_SIZE, &out[i]);
 			memcpy(vect, &in[i], AES_BLOCK_SIZE);
 		}
@@ -43,14 +43,16 @@ static void aes_cbc_crypt(const char *in, char *out, size_t len,
 	free(vect);
 }
 
-void aes_cbc_encrypt(const char *in, char *out, size_t len,
-		unsigned int bits, const char *key, const char *iv)
+void aes_cbc_encrypt(const unsigned char *in, unsigned char *out, size_t len,
+		unsigned int bits, const unsigned char *key,
+		const unsigned char *iv)
 {
 	aes_cbc_crypt(in, out, len, bits, key, iv, true);
 }
 
-void aes_cbc_decrypt(const char *in, char *out, size_t len,
-		unsigned int bits, const char *key, const char *iv)
+void aes_cbc_decrypt(const unsigned char *in, unsigned char *out, size_t len,
+		unsigned int bits, const unsigned char *key,
+		const unsigned char *iv)
 {
 	aes_cbc_crypt(in, out, len, bits, key, iv, false);
 }

@@ -22,7 +22,7 @@ static char *role_strings[] = {
 
 struct profile {
 	char email[PROFILE_MAX_EMAIL_LENGTH + 1];
-	char uid;
+	unsigned int uid;
 	enum role role;
 };
 
@@ -37,7 +37,7 @@ static struct profile *profile_for(const char *email)
 		return NULL;
 	}
 	if (strchr(email, '&') || strchr(email, '=')) {
-		printf("invalid characters\n");
+		printf("invalid unsigned characters\n");
 		return NULL;
 	}
 	ret = malloc(sizeof(*ret));
@@ -51,13 +51,14 @@ static struct profile *profile_for(const char *email)
 	return ret;
 }
 
-static char key[KEY_BITS / 8];
+static unsigned char key[KEY_BITS / 8];
 
-static char *encrypt_profile(struct profile *profile, size_t *outlen)
+static unsigned char *encrypt_profile(struct profile *profile, size_t *outlen)
 {
-	char *in;
-	char *out;
+	unsigned char *in;
+	unsigned char *out;
 	size_t len;
+	size_t unpadded_len;
 
 	len = strlen("email=") + strlen(profile->email) +
 			strlen("&uid=xx&role=") +
@@ -74,18 +75,19 @@ static char *encrypt_profile(struct profile *profile, size_t *outlen)
 		free(in);
 		return NULL;
 	}
-	sprintf(in, "email=%s&uid=%02x&role=%s", profile->email, profile->uid,
+	unpadded_len = sprintf((char *)in, "email=%s&uid=%02x&role=%s",
+			profile->email, profile->uid,
 			role_strings[profile->role]);
-	pkcs7_pad(in, strlen(in), len);
+	pkcs7_pad(in, unpadded_len, len);
 	aes_ecb_encrypt(in, out, len, KEY_BITS, key);
 	free(in);
 	*outlen = len;
 	return out;
 }
 
-static struct profile *decrypt_profile(const char *in, size_t len)
+static struct profile *decrypt_profile(const unsigned char *in, size_t len)
 {
-	char *buf;
+	unsigned char *buf;
 	char *plain;
 	char *p;
 	struct profile *profile = NULL;
@@ -103,7 +105,7 @@ static struct profile *decrypt_profile(const char *in, size_t len)
 		perror("malloc");
 		goto out;
 	}
-	plain = buf;
+	plain = (char *)buf;
 	if (strncmp(plain, "email=", 6))
 		goto out;
 	plain += 6;
@@ -138,10 +140,10 @@ out:
 	return ret;
 }
 
-static char *encrypt_profile_for(const char *email, size_t *outlen)
+static unsigned char *encrypt_profile_for(const char *email, size_t *outlen)
 {
 	struct profile *profile;
-	char *ret;
+	unsigned char *ret;
 
 	profile = profile_for(email);
 	if (!profile)
@@ -157,9 +159,9 @@ static char *encrypt_profile_for(const char *email, size_t *outlen)
 
 int main(int argc, char *argv[])
 {
-	char *e1;
-	char *e2;
-	char *e3;
+	unsigned char *e1;
+	unsigned char *e2;
+	unsigned char *e3;
 	size_t len;
 	struct profile *profile;
 	int ret = 1;

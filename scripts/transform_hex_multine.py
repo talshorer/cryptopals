@@ -21,7 +21,7 @@ def main():
 	with sys.stdout as f:
 		f.write("#define INPUTLEN {}\n".format(len(data[0]) // 2))
 		f.write("\n")
-		f.write("static const char input[][INPUTLEN + 1] = {\n")
+		f.write("static const unsigned char input[][INPUTLEN + 1] = {\n")
 		for line in data:
 			f.write("\t\"{}\"".format(fix_line(line[:FIRSTLINEBYTES])))
 			if len(line) > FIRSTLINEBYTES:

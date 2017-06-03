@@ -9,10 +9,10 @@
 
 int main(int argc, char *argv[])
 {
-	char in[16 * 3];
+	unsigned char in[16 * 3];
 	struct oracle oracle;
 	size_t outlen;
-	char *out;
+	unsigned char *out;
 	unsigned int i;
 
 	memset(in, 0, sizeof(in));

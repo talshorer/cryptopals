@@ -5,17 +5,18 @@
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
-static const char admin_prefix[] = "comment1=cooking%20MCs;userdata=";
+static const unsigned char admin_prefix[] = "comment1=cooking%20MCs;userdata=";
 const size_t admin_prefix_len = sizeof(admin_prefix) - 1;
-static const char admin_suffix[] = ";comment2=%20like%20a%20pound%20of%20bacon";
+static const unsigned char admin_suffix[] =
+		";comment2=%20like%20a%20pound%20of%20bacon";
 static const size_t admin_suffix_len = sizeof(admin_suffix) - 1;
-static const char admin_target[] = ";admin=true;";
+static const unsigned char admin_target[] = ";admin=true;";
 const size_t admin_target_len = sizeof(admin_target) - 1;
 
-static bool is_admin(struct oracle *oracle, const char *cipher, size_t len,
-		admin_decrypt_t decrypt)
+static bool is_admin(struct oracle *oracle, const unsigned char *cipher,
+		size_t len, admin_decrypt_t decrypt)
 {
-	char *plain;
+	unsigned char *plain;
 	void *ret;
 
 	plain = malloc(len);
@@ -32,10 +33,10 @@ static bool is_admin(struct oracle *oracle, const char *cipher, size_t len,
 int admin_attack(size_t inlen, enum oracle_mode mode, admin_decrypt_t decrypt)
 {
 	struct oracle oracle;
-	char *in;
-	char *out;
+	unsigned char *in;
+	unsigned char *out;
 	size_t outlen;
-	char *outtarget;
+	unsigned char *outtarget;
 	int ret = 1;
 
 	if (setup_oracle(&oracle, 0, admin_prefix, admin_prefix_len,

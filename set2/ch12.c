@@ -10,8 +10,8 @@
 int main(int argc, char *argv[])
 {
 	struct oracle oracle;
-	char *suffix;
-	char *out;
+	unsigned char *suffix;
+	unsigned char *out;
 	size_t len, outlen;
 	int ret;
 	unsigned int i;

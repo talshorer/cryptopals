@@ -9,10 +9,10 @@
 
 static size_t discover_block_size(struct oracle *oracle, size_t *suffix_len)
 {
-	char *out;
+	unsigned char *out;
 	size_t outlen;
 	size_t last_outlen = 0;
-	char *in;
+	unsigned char *in;
 	size_t len;
 	size_t ret;
 	unsigned int shift = INITIAL_SHIFT;
@@ -51,8 +51,8 @@ out:
 
 static bool assert_ecb(struct oracle *oracle, size_t bytes)
 {
-	char *in;
-	char *out;
+	unsigned char *in;
+	unsigned char *out;
 	size_t inlen;
 	size_t outlen;
 	bool ret;
@@ -75,11 +75,11 @@ static bool assert_ecb(struct oracle *oracle, size_t bytes)
 
 static int get_full_prefix_blocks(struct oracle *oracle, size_t bytes)
 {
-	char *out1;
-	char *out2;
+	unsigned char *out1;
+	unsigned char *out2;
 	size_t outlen;
 	int ret = -1;
-	char x;
+	unsigned char x;
 	unsigned int i;
 
 	x = 0;
@@ -104,12 +104,12 @@ fail1:
 static int get_prefix_size_mod_block_size(struct oracle *oracle, size_t bytes,
 		int full_prefix_blocks)
 {
-	char *in;
-	char *out;
+	unsigned char *in;
+	unsigned char *out;
 	int ret = -1;
 	unsigned int i;
 	size_t outlen;
-	char x, y;
+	unsigned char x, y;
 
 	x = 0x00;
 	y = 0xff;
@@ -161,23 +161,23 @@ fail_malloc_in:
 	return ret;
 }
 
-char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len)
+unsigned char *oracle_get_suffix(struct oracle *oracle, size_t *suffix_len)
 {
 	size_t bytes;
 	size_t total_len;
 	int full_prefix_blocks;
 	int prefix_size_mod_block_size;
 	size_t prefix_len;
-	char *stimulus;
-	char *buf;
-	char *table[0x100];
+	unsigned char *stimulus;
+	unsigned char *buf;
+	unsigned char *table[0x100];
 	unsigned int i, j;
-	char *suffix = NULL;
+	unsigned char *suffix = NULL;
 	size_t stimulus_len;
 	size_t stimulus_prepend_len;
 	size_t from_attacker;
 	unsigned int offset;
-	char *out;
+	unsigned char *out;
 	size_t outlen;
 
 	bytes = discover_block_size(oracle, &total_len);
