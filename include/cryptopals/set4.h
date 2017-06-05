@@ -12,4 +12,7 @@ extern void attack_random_access_aes_ctr(unsigned char *cipher,
 		const unsigned char *key, const unsigned char *nonce,
 		bool big_endian);
 
+extern void sha1_keyed_mac(const unsigned char *msg, size_t msglen,
+		const unsigned char *key, size_t keylen, unsigned char *out);
+
 #endif /* _SET4_H */

@@ -1,6 +1,13 @@
-CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L. -Iinclude -g
+CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L. -Iinclude -g -Wsparse-all \
+  -Wno-sizeof-bool -Wno-transparent-union
+
+ifndef LD_LIBRARY_PATH
+include env.sh
+endif
 
 CLEAN = @find . -name "$(1)" -exec rm -f {} \;
+
+CC = cgcc
 
 LIB := libcryptopals.so
 

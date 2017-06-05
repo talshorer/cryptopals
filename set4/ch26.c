@@ -4,7 +4,7 @@
 #include <cryptopals/set2.h>
 #include <cryptopals/set3.h>
 
-void decrypt_ctr(struct oracle *oracle, const unsigned char *cipher,
+static void decrypt_ctr(struct oracle *oracle, const unsigned char *cipher,
 		unsigned char *plain, size_t len)
 {
 	aes_ctr_crypt(cipher, plain, len, oracle->bits, oracle->key,

@@ -3,7 +3,7 @@
 
 #include <cryptopals/set2.h>
 
-void decrypt_cbc(struct oracle *oracle, const unsigned char *cipher,
+static void decrypt_cbc(struct oracle *oracle, const unsigned char *cipher,
 		unsigned char *plain, size_t len)
 {
 	aes_cbc_decrypt(cipher, plain, len, oracle->bits, oracle->key,
