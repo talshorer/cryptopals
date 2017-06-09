@@ -5,12 +5,12 @@
 #include <cryptopals/set1.h>
 #include <cryptopals/set2.h>
 
-static const unsigned char admin_prefix[] = "comment1=cooking%20MCs;userdata=";
+const unsigned char admin_prefix[] = "comment1=cooking%20MCs;userdata=";
 const size_t admin_prefix_len = sizeof(admin_prefix) - 1;
-static const unsigned char admin_suffix[] =
+const unsigned char admin_suffix[] =
 		";comment2=%20like%20a%20pound%20of%20bacon";
-static const size_t admin_suffix_len = sizeof(admin_suffix) - 1;
-static const unsigned char admin_target[] = ";admin=true;";
+const size_t admin_suffix_len = sizeof(admin_suffix) - 1;
+const unsigned char admin_target[] = ";admin=true;";
 const size_t admin_target_len = sizeof(admin_target) - 1;
 
 static bool is_admin(struct oracle *oracle, const unsigned char *cipher,

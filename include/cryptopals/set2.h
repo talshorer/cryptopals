@@ -48,7 +48,11 @@ extern unsigned char *oracle_get_suffix(struct oracle *oracle,
 
 typedef void (*admin_decrypt_t)(struct oracle *oracle,
 		const unsigned char *cipher, unsigned char *plain, size_t len);
+extern const unsigned char admin_prefix[];
 extern const size_t admin_prefix_len;
+extern const unsigned char admin_suffix[];
+extern const size_t admin_suffix_len;
+extern const unsigned char admin_target[];
 extern const size_t admin_target_len;
 extern int admin_attack(size_t inlen, enum oracle_mode mode,
 		admin_decrypt_t decrypt);
