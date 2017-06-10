@@ -24,4 +24,13 @@ extern void sha1_pad(unsigned char *buf, size_t len);
 extern void sha1_append(const unsigned char *oldhash, size_t oldlen,
 		const unsigned char *msg, size_t msglen, unsigned char *out);
 
+extern void md4_keyed_mac(const unsigned char *msg, size_t msglen,
+		const unsigned char *key, size_t keylen, unsigned char *out);
+
+#define md4_get_padded_size(len) \
+	pkcs7_get_padded_size((len) + sizeof(uint64_t), MD4_CBLOCK)
+extern void md4_pad(unsigned char *buf, size_t len);
+extern void md4_append(const unsigned char *oldhash, size_t oldlen,
+		const unsigned char *msg, size_t msglen, unsigned char *out);
+
 #endif /* _SET4_H */
