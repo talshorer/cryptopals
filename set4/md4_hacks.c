@@ -6,20 +6,20 @@
 
 void md4_pad(unsigned char *pad, size_t len)
 {
-	uint64_t be_bitlen = htole64(len * 8);
+	uint64_t le_bitlen = htole64(len * 8);
 	size_t padlen = md4_get_padded_size(len) - len;
 
 	pad[0] = 0x80;
-	memset(pad + 1, 0, padlen - sizeof(be_bitlen) - 1);
-	memcpy(pad + padlen - sizeof(be_bitlen), &be_bitlen, sizeof(be_bitlen));
+	memset(pad + 1, 0, padlen - sizeof(le_bitlen) - 1);
+	memcpy(pad + padlen - sizeof(le_bitlen), &le_bitlen, sizeof(le_bitlen));
 }
 
 static uint32_t __read_le32(const unsigned char *buf)
 {
-	uint32_t be_val;
+	uint32_t le_val;
 
-	memcpy(&be_val, buf, sizeof(be_val));
-	return le32toh(be_val);
+	memcpy(&le_val, buf, sizeof(le_val));
+	return le32toh(le_val);
 }
 
 static void md4_custom_init(MD4_CTX *ctx, const unsigned char *hash,
