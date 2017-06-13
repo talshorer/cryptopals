@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
 
 #include <cryptopals/set2.h>
 
@@ -32,5 +33,16 @@ extern void md4_keyed_mac(const unsigned char *msg, size_t msglen,
 extern void md4_pad(unsigned char *buf, size_t len);
 extern void md4_append(const unsigned char *oldhash, size_t oldlen,
 		const unsigned char *msg, size_t msglen, unsigned char *out);
+
+struct hmac_server {
+	unsigned char *key;
+	size_t keylen;
+	struct timespec req;
+};
+extern int hmac_server_init(struct hmac_server *server, unsigned int delay_ms);
+extern bool hmac_server_verify(struct hmac_server *server,
+		const unsigned char *msg, size_t msglen,
+		const unsigned char *hmac);
+extern void hmac_server_cleanup(struct hmac_server *server);
 
 #endif /* _SET4_H */

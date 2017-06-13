@@ -2,6 +2,7 @@
 #define _SET2_H
 
 #include <stdbool.h>
+#include <string.h>
 
 extern void pkcs7_pad(unsigned char *buf, size_t inlen, size_t outlen);
 extern size_t pkcs7_get_padded_size(size_t inlen, unsigned int bytes);
