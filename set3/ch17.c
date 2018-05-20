@@ -14,6 +14,7 @@
 #define ITERATIONS 32
 
 struct cookie {
+	unsigned char *plaintext;
 	unsigned char *iv;
 	unsigned char *ciphertext;
 	size_t size;
@@ -21,77 +22,61 @@ struct cookie {
 
 static unsigned char key[BITS / 8];
 
-static void init_cookie(struct cookie *cookie)
-{
-	memset(cookie, 0, sizeof(*cookie));
-}
-
-static int fill_cookie(struct cookie *cookie)
-{
-	const char *inputbuf;
-	size_t base64_size;
-	unsigned char *plain;
-	size_t plain_size;
-	int ret = -1;
-
-	inputbuf = input[random() % ARRAY_SIZE(input)];
-	base64_size = strlen(inputbuf);
-	plain_size = base64_size_to_plain_size(inputbuf, base64_size);
-	cookie->size = pkcs7_get_padded_size(plain_size, AES_BLOCK_SIZE);
-	plain = malloc(cookie->size);
-	if (!plain) {
-		perror("malloc plain");
-		goto fail_malloc_plain;
-	}
-	cookie->iv = make_random_bytes(AES_BLOCK_SIZE);
-	if (!cookie->iv) {
-		perror("make_random_bytes cookie->iv");
-		goto fail_make_iv;
-	}
-	cookie->ciphertext = malloc(cookie->size);
-	if (!cookie->ciphertext) {
-		perror("malloc cookie->ciphertext");
-		goto fail_malloc_ciphertext;
-	}
-	decode_base64(inputbuf, base64_size, plain);
-	plain[plain_size] = 0;
-	printf("%s:\t%s\n", __func__, plain);
-	pkcs7_pad(plain, plain_size, cookie->size);
-	aes_cbc_encrypt(plain, cookie->ciphertext, cookie->size,
-			BITS, key, cookie->iv);
-	ret = 0;
-fail_malloc_ciphertext:
-	if (ret)
-		free(cookie->iv);
-fail_make_iv:
-	free(plain);
-fail_malloc_plain:
-	return ret;
-}
-
 static void put_cookie(struct cookie *cookie)
 {
+	if (cookie->plaintext)
+		free(cookie->plaintext);
 	if (cookie->iv)
 		free(cookie->iv);
 	if (cookie->ciphertext)
 		free(cookie->ciphertext);
-	init_cookie(cookie);
+}
+
+static int init_cookie(struct cookie *cookie)
+{
+	const char *inputbuf;
+	size_t base64_size;
+	size_t plain_size;
+
+	memset(cookie, 0, sizeof(*cookie));
+	inputbuf = input[random() % ARRAY_SIZE(input)];
+	base64_size = strlen(inputbuf);
+	plain_size = base64_size_to_plain_size(inputbuf, base64_size);
+	cookie->size = pkcs7_get_padded_size(plain_size, AES_BLOCK_SIZE);
+	cookie->plaintext = malloc(cookie->size);
+	if (!cookie->plaintext) {
+		perror("malloc plain");
+		goto fail;
+	}
+	cookie->iv = make_random_bytes(AES_BLOCK_SIZE);
+	if (!cookie->iv) {
+		perror("make_random_bytes cookie->iv");
+		goto fail;
+	}
+	cookie->ciphertext = malloc(cookie->size);
+	if (!cookie->ciphertext) {
+		perror("malloc cookie->ciphertext");
+		goto fail;
+	}
+	decode_base64(inputbuf, base64_size, cookie->plaintext);
+	cookie->plaintext[plain_size] = 0;
+	printf("%s:\t%s\n", __func__, cookie->plaintext);
+	pkcs7_pad(cookie->plaintext, plain_size, cookie->size);
+	aes_cbc_encrypt(cookie->plaintext, cookie->ciphertext, cookie->size,
+			BITS, key, cookie->iv);
+	return 0;
+fail:
+	put_cookie(cookie);
+	return 1;
 }
 
 static bool verify_cookie(struct cookie *cookie)
 {
-	unsigned char *plain;
 	bool ret;
 
-	plain = malloc(cookie->size);
-	if (!plain) {
-		perror("malloc plain");
-		return false;
-	}
-	aes_cbc_decrypt(cookie->ciphertext, plain, cookie->size,
+	aes_cbc_decrypt(cookie->ciphertext, cookie->plaintext, cookie->size,
 			BITS, key, cookie->iv);
-	ret = pkcs7_validate_padding(plain, cookie->size);
-	free(plain);
+	ret = pkcs7_validate_padding(cookie->plaintext, cookie->size);
 	return ret;
 }
 
@@ -146,11 +131,13 @@ int main(int argc, char *argv[])
 	unsigned char *plain;
 
 	fill_random_bytes(key, sizeof(key));
-	init_cookie(&cookie);
 	for (i = 0; i < ITERATIONS; i++) {
 		if (i)
 			printf("\n");
-		fill_cookie(&cookie);
+		if (init_cookie(&cookie)) {
+			perror("init cookie");
+			return 1;
+		}
 		size = cookie.size;
 		plain = malloc(cookie.size);
 		if (!plain) {
