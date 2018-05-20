@@ -35,7 +35,7 @@ void aes_ctr_edit(unsigned char *ciphertext, unsigned int bits,
 	aes_ctr_setup(&aes_key, bits, key, nonce, &ctr, &keystream);
 	if (!keystream)
 		goto fail_aes_ctr_setup;
-		offset -= suboffset;
+	offset -= suboffset;
 	for (i = 0; i < offset / AES_BLOCK_SIZE; i++)
 		bigint_inc(ctr + halfblock, halfblock, big_endian);
 	memcpy(ctr_copy, ctr, AES_BLOCK_SIZE);
