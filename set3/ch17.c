@@ -98,16 +98,11 @@ static bool verify_cookie(struct cookie *cookie)
 static void decipher_last_block(struct cookie *cookie, unsigned char *out)
 {
 	unsigned char *prev_block;
-	unsigned char *prev_block_copy;
+	unsigned char prev_block_copy[AES_BLOCK_SIZE];
 	unsigned int i, padding;
 
 	prev_block = cookie->size == AES_BLOCK_SIZE ? cookie->iv :
 			cookie->ciphertext + cookie->size - AES_BLOCK_SIZE * 2;
-	prev_block_copy = malloc(AES_BLOCK_SIZE);
-	if (!prev_block_copy) {
-		perror("malloc prev_block_copy");
-		return;
-	}
 	memcpy(prev_block_copy, prev_block, AES_BLOCK_SIZE);
 	/* do we have valid padding to begin with? */
 	if (verify_cookie(cookie)) {
@@ -141,7 +136,6 @@ static void decipher_last_block(struct cookie *cookie, unsigned char *out)
 		out[AES_BLOCK_SIZE - 1 - padding] = i ^ (padding + 1);
 	}
 	memcpy(prev_block, prev_block_copy, AES_BLOCK_SIZE);
-	free(prev_block_copy);
 }
 
 int main(int argc, char *argv[])

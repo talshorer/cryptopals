@@ -10,7 +10,7 @@
 extern void bigint_inc(unsigned char *x, size_t len, bool big_endian);
 extern void aes_ctr_setup(AES_KEY *aes_key, unsigned int bits,
 		const unsigned char *key, const unsigned char *nonce,
-		unsigned char **ctr, unsigned char **keystream);
+		unsigned char *ctr, unsigned char *keystream);
 extern void aes_ctr_do_crypt(const unsigned char *in, unsigned char *out,
 		size_t len, unsigned int bits, AES_KEY *aes_key,
 		bool big_endian, unsigned char *ctr, unsigned char *keystream);

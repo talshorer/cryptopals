@@ -8,14 +8,15 @@
 #include <cryptopals/set3.h>
 #include <cryptopals/set4.h>
 
-void aes_ctr_edit(unsigned char *ciphertext, unsigned int bits,
-		const unsigned char *key, const unsigned char *nonce,
-		bool big_endian, unsigned int offset,
-		const unsigned char *newtext, size_t len)
+static void aes_ctr_edit(
+	unsigned char *ciphertext, unsigned int bits,
+	const unsigned char *key, const unsigned char *nonce,
+	bool big_endian, unsigned int offset,
+	const unsigned char *newtext, size_t len)
 {
-	unsigned char *ctr;
-	unsigned char *ctr_copy;
-	unsigned char *keystream;
+	unsigned char ctr[AES_BLOCK_SIZE];
+	unsigned char ctr_copy[AES_BLOCK_SIZE];
+	unsigned char keystream[AES_BLOCK_SIZE];
 	unsigned char *plain;
 	AES_KEY aes_key;
 	unsigned int i;
@@ -27,14 +28,7 @@ void aes_ctr_edit(unsigned char *ciphertext, unsigned int bits,
 		perror("malloc plain");
 		return;
 	}
-	ctr_copy = malloc(AES_BLOCK_SIZE);
-	if (!ctr_copy) {
-		perror("malloc ctr_copy");
-		goto fail_malloc_ctr_copy;
-	}
-	aes_ctr_setup(&aes_key, bits, key, nonce, &ctr, &keystream);
-	if (!keystream)
-		goto fail_aes_ctr_setup;
+	aes_ctr_setup(&aes_key, bits, key, nonce, ctr, keystream);
 	offset -= suboffset;
 	for (i = 0; i < offset / AES_BLOCK_SIZE; i++)
 		bigint_inc(ctr + halfblock, halfblock, big_endian);
@@ -44,12 +38,6 @@ void aes_ctr_edit(unsigned char *ciphertext, unsigned int bits,
 	memcpy(plain + suboffset, newtext, len);
 	aes_ctr_do_crypt(plain, ciphertext + offset, len + suboffset, bits,
 			&aes_key, big_endian, ctr_copy, keystream);
-
-	free(ctr);
-	free(keystream);
-fail_aes_ctr_setup:
-	free(ctr_copy);
-fail_malloc_ctr_copy:
 	free(plain);
 }
 

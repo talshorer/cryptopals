@@ -10,15 +10,10 @@ static void aes_cbc_crypt(const unsigned char *in, unsigned char *out,
 		size_t len, unsigned int bits, const unsigned char *key,
 		const unsigned char *iv, bool encrypt)
 {
-	unsigned char *vect;
+	unsigned char vect[AES_BLOCK_SIZE];
 	unsigned int i;
 	AES_KEY aes_key;
 
-	vect = malloc(AES_BLOCK_SIZE);
-	if (!vect) {
-		perror("malloc vect");
-		return;
-	}
 	if (iv)
 		memcpy(vect, iv, AES_BLOCK_SIZE);
 	else
@@ -39,8 +34,6 @@ static void aes_cbc_crypt(const unsigned char *in, unsigned char *out,
 			memcpy(vect, &in[i], AES_BLOCK_SIZE);
 		}
 	}
-
-	free(vect);
 }
 
 void aes_cbc_encrypt(const unsigned char *in, unsigned char *out, size_t len,
