@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include <openssl/sha.h>
 
 #include <cryptopals/core.h>
 #include <cryptopals/set4.h>
 
-#define DELAY_MS 5
+#define DELAY_MS 10
 
 static unsigned char msg[] = "hello, world!\n";
 
@@ -49,23 +50,27 @@ int main(int argc, char *argv[])
 	}
 	sha1_keyed_mac(msg, sizeof(msg), server.key, server.keylen, hmac);
 	for (i = 0; i < SHA_DIGEST_LENGTH; i++)
-		printf("%02x", hmac[i]);
+		printf("%s%02x", i ? "-" : "", hmac[i]);
 	printf("\n");
 	memset(hmac, 0, sizeof(hmac));
 	base = get_base_time(&server, hmac);
 	for (i = 0; i < SHA_DIGEST_LENGTH; i++) {
+		if (i)
+			dprintf(STDOUT_FILENO, "-");
 		for (j = 0; j < 0x100; j++) {
+			dprintf(STDOUT_FILENO, "%02x", hmac[i]);
 			hmac[i] = j;
 			if ((verify_measure(&server, hmac) - base) / DELAY_MS >
 					i)
 				break;
+			dprintf(STDOUT_FILENO, "\b\b");
 		}
 		if (j == 0x100) {
 			printf("%sfailed to get hmac at offset %d\n",
 					i ? "\n" : "", i);
 			break;
 		}
-		printf("%02x", hmac[i]);
+		dprintf(STDOUT_FILENO, "\b\b%02x", hmac[i]);
 	}
 	if (i)
 		printf("\n");
