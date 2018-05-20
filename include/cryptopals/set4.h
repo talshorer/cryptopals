@@ -40,9 +40,21 @@ struct hmac_server {
 	struct timespec req;
 };
 extern int hmac_server_init(struct hmac_server *server, unsigned int delay_ms);
-extern bool hmac_server_verify(struct hmac_server *server,
-		const unsigned char *msg, size_t msglen,
-		const unsigned char *hmac);
+extern bool hmac_server_verify(const struct hmac_server *server,
+	const unsigned char *msg, size_t msglen, const unsigned char *hmac);
 extern void hmac_server_cleanup(struct hmac_server *server);
+
+extern unsigned char hmac_server_break_msg[32];
+extern unsigned long hmac_server_break_verify_measure(
+	const struct hmac_server *server, const unsigned char *hmac);
+extern unsigned long hmac_server_break_get_base_time(
+	const struct hmac_server *server, unsigned char *hmac);
+extern void hmac_server_break_enter_outer(unsigned int i);
+extern void hmac_server_break_enter_inner(unsigned int j);
+extern void hmac_server_break_reverse_inner(void);
+typedef unsigned int (*hmac_server_breaker_t)(
+	const struct hmac_server *server, unsigned char *hmac);
+extern int hmac_server_break_main(
+	unsigned int delay_ms, hmac_server_breaker_t breaker);
 
 #endif /* _SET4_H */

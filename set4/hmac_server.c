@@ -15,8 +15,8 @@ int hmac_server_init(struct hmac_server *server, unsigned int delay_ms)
 	return !server->key;
 }
 
-bool hmac_server_verify(struct hmac_server *server, const unsigned char *msg,
-		size_t msglen, const unsigned char *hmac)
+bool hmac_server_verify(const struct hmac_server *server,
+	const unsigned char *msg, size_t msglen, const unsigned char *hmac)
 {
 	unsigned char calculated[SHA_DIGEST_LENGTH];
 	unsigned int i;
