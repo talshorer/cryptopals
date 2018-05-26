@@ -1,5 +1,5 @@
 CFLAGS += -Wall -Werror -fPIC -D_GNU_SOURCE -L. -Iinclude -g -Wsparse-all \
-  -Wsparse-error -Wno-sizeof-bool -Wno-transparent-union
+  -Wsparse-error -Wno-sizeof-bool -Wno-transparent-union -D_Float128="double"
 
 ifndef LD_LIBRARY_PATH
 include env.sh
