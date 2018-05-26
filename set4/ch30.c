@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <openssl/sha.h>
+#include <openssl/md4.h>
 
 #include <cryptopals/set2.h>
 #include <cryptopals/set4.h>
@@ -17,9 +17,9 @@ static size_t userdata_len = sizeof(userdata) - 1;
 static bool validate_message(const unsigned char *msg, size_t len,
 		const unsigned char *hmac)
 {
-	unsigned char calculated[SHA_DIGEST_LENGTH];
+	unsigned char calculated[MD4_DIGEST_LENGTH];
 
-	sha1_keyed_mac(msg, len, key, keylen, calculated);
+	md4_keyed_mac(msg, len, key, keylen, calculated);
 	return !memcmp(hmac, calculated, sizeof(calculated));
 }
 
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 	unsigned int i;
 	size_t base_msglen;
 	size_t padded_msglen;
-	unsigned char base_hmac[SHA_DIGEST_LENGTH];
-	unsigned char hmac[SHA_DIGEST_LENGTH];
+	unsigned char base_hmac[MD4_DIGEST_LENGTH];
+	unsigned char hmac[MD4_DIGEST_LENGTH];
 
 	keylen = MIN_KEYLEN + random() % (MAX_KEYLEN - MIN_KEYLEN);
 	printf("keylen is %zd\n", keylen);
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	}
 	base_msglen = admin_prefix_len + userdata_len + admin_suffix_len;
 	/* enough for any needed padding */
-	msg = malloc(base_msglen + sizeof(uint64_t) + 1 + SHA_CBLOCK +
+	msg = malloc(base_msglen + sizeof(uint64_t) + 1 + MD4_CBLOCK +
 			admin_target_len);
 	if (!msg) {
 		perror("malloc msg");
@@ -53,14 +53,14 @@ int main(int argc, char *argv[])
 	memcpy(msg + i, userdata, userdata_len);
 	i += userdata_len;
 	memcpy(msg + i, admin_suffix, admin_suffix_len);
-	sha1_keyed_mac(msg, base_msglen, key, keylen, base_hmac);
+	md4_keyed_mac(msg, base_msglen, key, keylen, base_hmac);
 
 	/* begin the attack */
 	for (i = MIN_KEYLEN; i < MAX_KEYLEN; i++) {
-		padded_msglen = sha1_get_padded_size(base_msglen + i) - i;
-		sha1_pad(msg + base_msglen, base_msglen + i);
+		padded_msglen = md4_get_padded_size(base_msglen + i) - i;
+		md4_pad(msg + base_msglen, base_msglen + i);
 		memcpy(msg + padded_msglen, admin_target, admin_target_len);
-		sha1_append(base_hmac, padded_msglen + i, admin_target,
+		md4_append(base_hmac, padded_msglen + i, admin_target,
 				admin_target_len, hmac);
 		if (validate_message(msg, padded_msglen + admin_target_len,
 				hmac))
